@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/game/draft.css' %}">
+<title>Draft</title>
+{% endblock title %}
+
+{% block content %}
+<div class="okvirni_div">
+    <div class="prvi_div">
+        <a href="{% url 'home' %}">
+            <button>Idi kuci</button>
+        </a>
+    </div>
+    <div class="drugi_div">
+        <h1>Random numbers</h1>
+        <ul id="number_list">
+            {% for number in request.session.random_numbers %}
+            <li>{{number}}</li>
+            {% endfor %}
+        </ul>
+        
+    </div>
+    <div class="treci_div">
+        <form method="POST" action="{% url 'draft' %}">
+            {% csrf_token %}
+            <button type="submit" name="generate_new_numbers">Izvlačenje novih brojeva</button>
+        </form>
+    </div>
+
+</div>
+
+{% endblock content %}
+<script src="{% static 'js/draft.js' %}"></script>

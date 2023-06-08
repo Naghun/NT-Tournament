@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/game/cards.css' %}">
+<title>Cards</title>
+{% endblock title %}
+
+{% block content %}
+<div class="okvirni_div">
+    <div class="prvi_div">
+        <a href="{% url 'home' %}">
+            <button>Idi kuci</button>
+        </a>
+    </div>
+    <div class="drugi_div">
+        {% for cards in random_cards %}
+        <img src="{{cards.picture.url}}" alt="{{card.name}}">
+        {% endfor %}
+    </div>
+    <div class="treci_div">
+    </div>
+</div>
+
+{% endblock content %}

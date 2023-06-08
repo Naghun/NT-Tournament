@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/game/bonus.css' %}">
+<title>Bonus Page</title>
+{% endblock title %}
+
+{% block content %}
+<a href="{% url 'home' %}">
+    <button>Idi kuci</button>
+</a>
+{% endblock content %}

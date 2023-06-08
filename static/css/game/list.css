@@ -1,0 +1,18 @@
+.drugi_div {
+    width: 90%;
+    margin: 30px;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+table {
+    width: 50%;
+    border: 2px solid black;
+    text-align: center;
+}
+
+table tr th, td{
+    border: 2px solid black;
+}

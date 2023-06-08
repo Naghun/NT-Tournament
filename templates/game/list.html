@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/game/list.css' %}">
+<title>List of Cards</title>
+{% endblock title %}
+
+{% block content %}
+<div class="prvi_div">
+    <a href="{% url 'home' %}">
+        <button>Idi kuci</button>
+    </a>
+</div>
+<div class="drugi_div">
+
+    <table>
+        <tr>
+            <th>No</th>
+            <th>Name</th>
+            <th>Overall</th>
+            <th>Health</th>
+            <th>Attack</th>
+            <th>Deffence</th>
+        </tr>
+        {% for card in data_of_cards %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{card.name}}</td>
+            <td>{{card.overall}}</td>
+            <td>{{card.health}}</td>
+            <td>{{card.attack}}</td>
+            <td>{{card.deffence}}</td>
+        </tr>
+    {% endfor %}
+    </table>
+
+
+</div>
+
+{% endblock content %}

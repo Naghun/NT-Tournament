@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}">
+<title>Home Page</title>
+{% endblock title %}
+
+{% block content %}
+<h1>ovo je Home page</h1>
+
+<a href="{% url 'start' %}">
+    <button>Idi na Menu</button>
+</a>
+<a href="{% url 'list' %}">
+    <button>Idi na detalje karti</button>
+</a>
+<a href="{% url 'draft' %}">
+    <button>Idi u Draft</button>
+</a>
+<a href="{% url 'bonus' %}">
+    <button>Idi na Bonuse</button>
+</a>
+<a href="{% url 'tournament' %}">
+    <button>Idi na Turnir</button>
+</a>
+<a href="{% url 'cards' %}">
+    <button>Idi na Karte</button>
+</a>
+<a href="http://127.0.0.1:8000/admin/">
+    <button>Admin stranica</button>
+</a>
+{% endblock content %}
