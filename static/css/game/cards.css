@@ -4,8 +4,61 @@
 
 .drugi_div {
     width: 90%;
+    display: flex;
 }
 
 .drugi_div img {
     width: 150px;
+    position: relative;
+}
+
+.treci_div {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    gap: 40px;
+
+}
+.treci_div > * {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.treci_div p {
+    position: absolute;
+    top: 45%;
+}
+
+.treci_div img {
+    width: 150px;
+}
+
+.humans {
+    background: black;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.humans:hover {
+    background: rgb(192, 11, 11);
+    padding: 5px;
+}
+
+.fantasy {
+    background: black;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.fantasy:hover {
+    background: rgb(192, 11, 11);
+    padding: 5px;
+}
+
+.humans_cards, .fantasy_cards, .creature_cards, .alien_cards {
+    display: none;
 }

@@ -13,13 +13,39 @@
             <button>Idi kuci</button>
         </a>
     </div>
-    <div class="drugi_div">
-        {% for cards in random_cards %}
-        <img src="{{cards.picture.url}}" alt="{{card.name}}">
-        {% endfor %}
-    </div>
     <div class="treci_div">
+        <div class="humans">
+            <img src="{% static 'images/other/0. Back.jpg' %}">
+            <p>Humans</p>
+        </div>
+        <div class="fantasy">
+            <img src="{% static 'images/other/0. Back.jpg' %}">
+            <p>Fantasy</p>
+        </div>
+        <div class="creature">
+            <img src="{% static 'images/other/0. Back.jpg' %}">
+            <p>Creature</p>
+        </div>
+        <div class="aliens">
+            <img src="{% static 'images/other/0. Back.jpg' %}">
+            <p>Aliens</p>
+        </div>
+    </div>
+    <div class="drugi_div">
+        {% for card in pictures_of_cards %}
+            {% if forloop.counter <= 20 %}
+                <img src="{{ card.picture.url }}" alt="{{ card.name }}" id="humans_cards" class="humans_cards card{{forloop.counter}}">
+            {% elif forloop.counter >= 21 and forloop.counter <= 40 %}
+                <img src="{{ card.picture.url }}" alt="{{ card.name }}" id="fantasy_cards" class="fantasy_cards">
+            {% elif forloop.counter >= 41 and forloop.counter <= 60 %}
+                <img src="{{ card.picture.url }}" alt="{{ card.name }}" id="creature_cards" class="creature_cards">
+                {% elif forloop.counter >= 61 and forloop.counter <= 80 %}
+                <img src="{{ card.picture.url }}" alt="{{ card.name }}" id="alien_cards" class="alien_cards">
+            {% endif %}
+        {% endfor %}
+
+        
     </div>
 </div>
-
+<script src="{% static 'js/cards.js' %}"></script>
 {% endblock content %}

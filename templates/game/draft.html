@@ -14,18 +14,17 @@
         </a>
     </div>
     <div class="drugi_div">
-        <h1>Random numbers</h1>
-        <ul id="number_list">
-            {% for number in request.session.random_numbers %}
-            <li>{{number}}</li>
+        <h1>Random Cards</h1>
+        <div class="karte">
+            {% for card in cards %}
+                <img src="{{card.picture.url}}" alt="{{card.name}}">
             {% endfor %}
-        </ul>
-        
+        </div>
     </div>
     <div class="treci_div">
         <form method="POST" action="{% url 'draft' %}">
             {% csrf_token %}
-            <button type="submit" name="generate_new_numbers">Izvlačenje novih brojeva</button>
+            <input type="submit" value="New Cards">
         </form>
     </div>
 
