@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/game/pairs.css' %}">
+<h1>Pairs</h1>
+{% endblock title %}
+
+{% block content %}
+<h1>ovdje content</h1>
+<a href="{% url 'home' %}">
+    <button>Idi kuci</button>
+</a>
+
+{% for card in all_cards %}
+    {{card.name}}
+{% endfor %}
+{% endblock content %}
