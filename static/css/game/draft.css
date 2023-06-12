@@ -1,63 +1,103 @@
-.okvirni_div {
+.whole {
     width: 100%;
+    height: 100vh;
+    background-color: rgb(21, 164, 114);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin: 0%;
 }
 
-.prvi_div {
-    width: 50%;
-    height: 100px;
+.first {
+    width: 74%;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(21, 164, 114);
+}
+
+.second {
+    width: 74%;
+    margin: 0;
+    padding: 1%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(21, 164, 114);
+}
+
+.third {
+    width: 74%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(21, 164, 114);
+}
+
+h3 {
+    text-align: center;
+    font-size: 30px;
+    margin: 1%;
+    background-color: rgb(21, 164, 114);
+}
+
+.first_one, .first_two, .third_one, .third_two {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    background-color: rgb(21, 164, 114);
 }
 
-.drugi_div {
-    width: 95%;
-    border: 2px solid black;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.treci_div {
-    width: 50%;
-    height: 100px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.treci_div form {
+.inside {
     width: 90%;
+    gap: 4%;
+    background-color: rgb(21, 164, 114);
+}
+
+.inside img {
+    width: 20%;
+    margin: 1% 2%;
+}
+
+.second form {
+    width: 80%;
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: rgb(21, 164, 114);
 }
 
-.treci_div input {
-    width: 70%;
+.second form button {
+    width: 30%;
+    margin: 0% 2%;
+    height: 40px;
+    background-color: rgb(147, 157, 147);
+    font-size: 24px;
     border-radius: 10px;
-    background-color: green;
-    font-size: 18px;
-    padding: 5px;
+    border: 2px solid rgb(1, 1, 1);
 }
 
-.treci_div input:hover {
-    background-color: rgb(80, 129, 80);
+.second form button:hover {
+    background-color: rgb(33, 34, 33);
+    color: white;
 }
 
-.karte {
-    background-color: azure;
-    overflow: scroll;
-    margin: auto;
+.second a {
+    width: 30%;
+    margin: 0% 2%;
+    background-color: rgb(21, 164, 114);
 }
 
-.karte img {
-    width: 150px;
+.second a button {
+    width: 100%;
+    margin-left: 0%;
+    height: 40px;
+    background-color: rgb(147, 157, 147);
+    font-size: 24px;
+    border-radius: 10px;
+    border: 2px solid rgb(1, 1, 1);
 }

@@ -10,4 +10,35 @@
 <a href="{% url 'home' %}">
     <button>Idi kuci</button>
 </a>
+
+<div class="whole">
+    <div class="first">
+        {% for card in cards %}
+            {{card.name}}
+        {% endfor %}
+    </div>
+
+    <div class="second">
+        {% for number in numbers %}
+            {{number}}
+        {% endfor %}
+    </div>
+
+    <div class="third">
+        {% for card in bonuses %}
+            {{card}}
+        {% endfor %}
+    </div>
+
+    <div class="cetvrtI-div">
+        {% for key, fighter_data in fighters.items %}
+            <h2>Fighter{{forloop.counter}}</h2>
+            <p>Name: {{ fighter_data.1 }}</p>
+            <p>Overall: {{ fighter_data.2 }}</p>
+            <p>Health: {{ fighter_data.3 }}</p>
+            <p>Attack: {{ fighter_data.4 }}</p>
+            <p>Defense: {{ fighter_data.5 }}</p>
+        {% endfor %}
+    </div>
+</div>
 {% endblock content %}
