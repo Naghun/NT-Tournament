@@ -7,37 +7,44 @@
 {% endblock title %}
 
 {% block content %}
-<a href="{% url 'home' %}">
-    <button>Idi kuci</button>
-</a>
+<div class="vrh">
+    <a href="{% url 'home' %}">
+        <button>Idi kuci</button>
+    </a>
+    <form action="{% url 'bonus' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" name="delete_bonuses">Izbrisi Bonuse</button>
+    </form>
+    <button class="izvuci_bonuse">Izvuci Bonuse</button>
+</div>
+
 
 <div class="whole">
-    <div class="first">
-        {% for card in cards %}
-            {{card.name}}
-        {% endfor %}
-    </div>
-
-    <div class="second">
-        {% for number in numbers %}
-            {{number}}
-        {% endfor %}
-    </div>
-
-    <div class="third">
-        {% for card in bonuses %}
-            {{card}}
-        {% endfor %}
-    </div>
-
-    <div class="cetvrtI-div">
+    <div class="fighters">
         {% for key, fighter_data in fighters.items %}
-            <h2>Fighter{{forloop.counter}}</h2>
-            <p>Name: {{ fighter_data.1 }}</p>
-            <p>Overall: {{ fighter_data.2 }}</p>
-            <p>Health: {{ fighter_data.3 }}</p>
-            <p>Attack: {{ fighter_data.4 }}</p>
-            <p>Defense: {{ fighter_data.5 }}</p>
+            <div>
+                <h3>Fighter {{forloop.counter}}</h3>
+                <h2>{{ fighter_data.1 }}</h2>
+                {% for card in bonuses %}
+                    {% if forloop.counter == forloop.parentloop.counter %}
+                        <h4>{{card}}</h4>
+                    {% endif %}
+                {% endfor %}
+                <table>
+                    <tr>
+                        <th>Overall</th>
+                        <th>Health</th>
+                        <th>Attack</th>
+                        <th>Deffence</th>
+                    </tr>
+                    <tr>
+                        <td>{{fighter_data.2}}</td>
+                        <td>{{fighter_data.3}}</td>
+                        <td>{{fighter_data.4}}</td>
+                        <td>{{fighter_data.5}}</td>
+                    </tr>
+                </table>
+            </div>
         {% endfor %}
     </div>
 </div>

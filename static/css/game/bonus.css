@@ -1,0 +1,46 @@
+.vrh {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.whole {
+    background-color: rgb(70, 101, 91);
+    width: 96%;
+    border: 2px solid black;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 1%;
+    padding: 1%;
+}
+
+.fighters {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+}
+
+.fighters div {
+    border: 1px solid black;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.fighters div h2 {
+    margin: 1%;
+}
+
+.fighters div h3 {
+    margin: 1%;
+}
+
+.fighters table {
+    width: 10%;
+}
