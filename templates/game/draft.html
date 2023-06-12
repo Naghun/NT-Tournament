@@ -7,53 +7,76 @@
 {% endblock title %}
 
 {% block content %}
-<div class="okvirni_div">
-    <div class="prvi_div">
-        <a href="{% url 'home' %}">
-            <button>Idi kuci</button>
-        </a>
-    </div>
-    </div>
-    <div class="drugi_div">
-        <h1>Random Cards</h1>
-        <div class="karte">
-            {% if cards %}
-                {% for card in cards %}
-                    <img src="{{ card.picture.url }}" alt="{{ card.name }}">
-                {% endfor %}
-            {% else %}
-                <p>Empty.</p>
-            {% endif %}
-        </div>
-    </div>
-    <div class="treci_div">
-        <form method="POST" action="{% url 'draft' %}">
-            {% csrf_token %}
-            <input type="submit" name="new_cards" value="New Cards">
-            <input type="submit" name="delete_cards" value="Delete Cards">
-        </form>
-    </div>
-
-</div>
-
-
+<a href="{% url 'home' %}">
+    <button>idi kuci</button>
+</a>
 <div class="whole">
+    {% if cards %}
     <div class="first">
-        <div class="first_one"></div>
-        <div class="first_two"></div>
+        <div class="first_one">
+            <h3>Humans</h3>
+            <div class="inside">
+                {% for card in cards %}
+                    {% if forloop.counter < 9 %}
+                        <img src="{{ card.picture.url }}" alt="{{ card.name }}">
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="first_two">
+            <h3>Fantasy</h3>
+            <div class="inside">
+                {% for card in cards %}
+                    {% if forloop.counter >= 9 and forloop.counter < 17 %}
+                        <img src="{{ card.picture.url }}" alt="{{ card.name }}">
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
     </div>
     <div class="second">
         <form action="{% url 'draft' %}" method="POST">
-            <button type="submit" name="draw_human">Draw Human Champions</button>
-            <button type="submit" name="draw_fantasy">Draw Fantasy Champions</button>
-            <button type="submit" name="draw_creature">Draw Creature Champions</button>
-            <button type="submit" name="draw_alien">Draw Alien Champions</button>
+            {% csrf_token %}
+            <button type="submit" name="draw_cards">Draw Champions</button>
+            <button type="submit" name="delete_cards">Delete cards</button>
         </form>
+        <a href="{% url 'bonus' %}">
+            <button>Proceed to Bonuses</button>
+        </a>
     </div>
     <div class="third">
-        <div class="third_one"></div>
-        <div class="third_two"></div>
+        <div class="third_one">
+            <h3>Creature</h3>
+            <div class="inside">
+                {% for card in cards %}
+                    {% if forloop.counter >= 17 and forloop.counter < 25 %}
+                        <img src="{{ card.picture.url }}" alt="{{ card.name }}">
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="third_two">
+            <h3>Alien</h3>
+            <div class="inside">
+                {% for card in cards %}
+                    {% if forloop.counter >= 25 and forloop.counter <= 32 %}
+                        <img src="{{ card.picture.url }}" alt="{{ card.name }}">
+                    {% endif %}
+                {% endfor %}
+            </div>
     </div>
+    {% else %}
+    <div class="second">
+        <form action="{% url 'draft' %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" name="draw_cards">Draw Champions</button>
+            <a href="{% url 'bonus' %}">
+                <button>Proceed to Bonuses</button>
+            </a>
+            <button type="submit" name="delete_cards">Delete cards</button>
+        </form>
+    </div>
+    {% endif %}
 </div>
 
 {% endblock content %}
