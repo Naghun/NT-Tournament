@@ -225,19 +225,40 @@ class Draft_view(ListView):
         random_cards=list(drawn_human_cards+drawn_fantasy_cards+drawn_creature_cards+drawn_alien_cards)
 
         return random_cards
+    
+    """  #########################################################################################  """
 
 class Tournament_view(TemplateView):
     template_name='game/tournament.html'
 
+    """   ########################################################################################  """
+
 class PairsView(ListView):
     template_name='game/pairs.html'
     model=Card
+    context_object_name='pairs_list'
 
-    def get_pairs(self):
-        cards_id=self.request.session.get('card_ids')
-        return cards_id
+    def get(self, request):
+        if request.session['card_ids']:
+            card_ids=request.session.get('card_ids')
+            fighters=request.session.get('shuffled')
+            if fighters:
+                fighters=request.session.get('shuffled')
+            else:
+                fighters=self.get_pairs(request)
+
+        cards=Card.objects.filter(id__in=card_ids)
+        context={'fighters':fighters, 'cards':cards}
+        return render(request, self.template_name, context)
+
+
+    def get_pairs(self, request):
+        bonus_view=Bonus_view()
+        bonuses, fighters=bonus_view.define_bonuses(request)
+        keys=list(fighters.keys())
+        random.shuffle(keys)
+        shuffled_dict= {key: fighters[key] for key in keys}
+        request.session['shuffled']=shuffled_dict
+        return shuffled_dict
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['all_cards']=self.get_pairs()
-        return context
+

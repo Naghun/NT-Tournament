@@ -1,0 +1,39 @@
+.whole {
+    width: 98%;
+    margin: 0%;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    background-color: rgb(42, 62, 55);
+}
+
+.first_half {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    border: 2px solid black;
+    margin: 10px;
+    overflow: auto;
+}
+
+.second_half {
+    width: 35%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    border: 2px solid black;
+    margin: 10px;
+}
+
+.first_half img {
+    width: 200px;
+}
+
+.first_half div {
+    border: 2px solid black;
+    margin: 20px;
+}

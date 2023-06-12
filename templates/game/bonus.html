@@ -15,7 +15,9 @@
         {% csrf_token %}
         <button type="submit" name="delete_bonuses">Izbrisi Bonuse</button>
     </form>
-    <button class="izvuci_bonuse">Izvuci Bonuse</button>
+    <a href="{% url 'pairs' %}">
+        <button>Idi na parove</button>
+    </a>
 </div>
 
 
