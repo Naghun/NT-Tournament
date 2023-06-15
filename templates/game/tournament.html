@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-<link rel="stylesheet" type="text/css" href="{% static 'css/game/start.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/game/tournament.css' %}">
 <title>Tournament</title>
 {% endblock title %}
 
@@ -10,4 +10,113 @@
 <a href="{% url 'home' %}">
     <button>Idi kuci</button>
 </a>
+
+{% if request.method == "GET" %}
+    <div class="whole">
+        <div class="fighters">
+            <h1>Contestants</h1>
+
+                <p>
+                    {% for key, value in fighters.items %}
+                    {{value.1}}
+                    {% endfor %}
+                </p>
+        </div>
+
+        <div class="buttons">
+            <div class="forms">
+                <form action="{% url 'tournament' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" name="round1">Get Round1 Winners</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endif %}
+
+{% if request.method == "POST" %}
+
+<div class="buttons">
+    <div class="forms">
+        <form action="{% url 'tournament' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" name="round1">Get Round1 Winners</button>
+            <button type="submit" name="round16">Get Round16 Winners</button>
+            <button type="submit" name="quarters">Get Quarter Final Winners</button>
+            <button type="submit" name="semis">Get Semi Final Winners</button>
+            <button type="submit" name="finals">Get Winner</button>
+        </form>
+
+    </div>
+
+</div>
+
+<div class="whole">
+
+    <div class="fighters">
+
+
+        {% for key, value in round1.items %}
+        {{value.1}}
+        {% endfor %}
+
+        {% for key, value in round16.items %}
+        {{value.1}}
+        {% endfor %}
+
+
+        {% for key, value in quarters.items %}
+        {{value.1}}
+        {% endfor %}
+
+
+        {% for key, value in semis.items %}
+        {{value.1}}
+        {% endfor %}
+
+
+        {% for key, value in finals.items %}
+        {{value.1}}
+        {% endfor %}
+
+    </div>
+    
+    <div class="logs">
+
+        {% for log in round1_logs %}
+        {{log}}
+        <br>
+        {% endfor %}
+
+
+        {% for log in round16_logs %}
+        {{log}}
+        <br>
+        {% endfor %}
+
+
+        {% for log in quarters_logs %}
+        {{log}}
+        <br>
+        {% endfor %}
+
+
+        {% for log in semis_logs %}
+        {{log}}
+        <br>
+        {% endfor %}
+
+
+        {% for log in finals_logs %}
+        {{log}}
+        <br>
+        {% endfor %}
+
+
+    </div>
+</div>
+{% endif %}
 {% endblock content %}
+<script src="{% static 'js/jquery-3.6.4.min.js' %}"></script>
+<script src="{% static 'js/tournament.js' %}"></script>

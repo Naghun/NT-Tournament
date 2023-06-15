@@ -2,10 +2,12 @@
     width: 98%;
     margin: 0%;
     display: flex;
-    justify-content: center;
-    align-items: start;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
     background-color: rgb(42, 62, 55);
 }
+
 
 .first_half {
     width: 60%;
@@ -17,23 +19,38 @@
     margin: 10px;
     overflow: auto;
 }
-
-.second_half {
-    width: 35%;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    align-items: center;
-    border: 2px solid black;
-    margin: 10px;
-}
-
 .first_half img {
-    width: 200px;
+    width: 250px;
 }
 
 .first_half div {
-    border: 2px solid black;
     margin: 20px;
+    border: 2px solid black;
+}
+
+.pairs {
+    width: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+}
+
+.pairs div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border: none;
+}
+
+.pairs div table {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border: 1px solid black;
+    margin: 1%;
+    width: 100%;
 }

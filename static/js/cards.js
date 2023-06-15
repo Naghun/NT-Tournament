@@ -13,3 +13,5 @@ fantasy.addEventListener('click', function () {
         element.style.display='block'
     });
 })
+
+fantasy.load

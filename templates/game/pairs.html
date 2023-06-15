@@ -10,9 +10,12 @@
 <a href="{% url 'home' %}">
     <button>Idi kuci</button>
 </a>
+<a href="{% url 'tournament' %}">
+    <button>Idi na turnir</button>
+</a>
 <div class="whole">
     <div class="first_half">
-        <h1>Pairs here</h1>
+        <h1>Round 1</h1>
         {% for key, fighter_data in fighters.items %}
             {% if forloop.counter0|divisibleby:2 %}
                 <div class="pairs">
@@ -58,17 +61,16 @@
                                 {% endif %}
                             {% endif %}
                         {% endfor %}
+                    {% if forloop.counter0|divisibleby:2 %}
+                        <div class="vs">
+                            <h1>vs</h1>
+                        </div>
+                    {% endif %}
                     {% if forloop.counter|divisibleby:2 or forloop.last %}
                 </div>
             {% endif %}
         {% endfor %}
         
-    </div>
-    <div class="second_half">
-        <h1>Logs here</h1>
-        <p>
-
-        </p>
     </div>
 </div>
 
