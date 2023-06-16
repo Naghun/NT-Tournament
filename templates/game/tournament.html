@@ -13,15 +13,6 @@
 
 {% if request.method == "GET" %}
     <div class="whole">
-        <div class="fighters">
-            <h1>Contestants</h1>
-
-                <p>
-                    {% for key, value in fighters.items %}
-                    {{value.1}}
-                    {% endfor %}
-                </p>
-        </div>
 
         <div class="buttons">
             <div class="forms">
@@ -31,92 +22,212 @@
                 </form>
             </div>
         </div>
+
+        <div class="fighters_cont">
+            <h1>Contestants</h1>
+
+                <p>
+                    {% for key, value in fighters.items %}
+                    {{value.1}}
+                    {% endfor %}
+                </p>
+        </div>
+
     </div>
 
 {% endif %}
 
-{% if request.method == "POST" %}
+{% if round1 %}
 
-<div class="buttons">
-    <div class="forms">
-        <form action="{% url 'tournament' %}" method="post">
-            {% csrf_token %}
-            <button type="submit" name="round1">Get Round1 Winners</button>
-            <button type="submit" name="round16">Get Round16 Winners</button>
-            <button type="submit" name="quarters">Get Quarter Final Winners</button>
-            <button type="submit" name="semis">Get Semi Final Winners</button>
-            <button type="submit" name="finals">Get Winner</button>
-        </form>
+    <div class="whole">
 
+        <div class="buttons">
+            <div class="forms">
+                <form action="{% url 'tournament' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" name="round16">Get Round16 Winners</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="fighters">
+            <div class="battle">
+
+                <h1>Round 1 Winners and Round 16 champions</h1>
+                <p>
+                    {% for key, value in round1.items %}
+                    {{value.1}}
+                    {% endfor %}
+                </p>
+
+            </div>
+
+            <div class="logs">
+
+                <h1>Logs Round1</h1>
+                {% for log in round1_logs %}
+                {{log}}
+                <br>
+                {% endfor %} 
+        
+            </div>   
+        </div>
     </div>
 
-</div>
+{% elif round16 %}
 
-<div class="whole">
+    <div class="whole">
 
-    <div class="fighters">
+        <div class="buttons">
+            <div class="forms">
+                <form action="{% url 'tournament' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" name="quarters">Get Quarter Final Winners</button>
+                </form>
+            </div>
+        </div>
 
+        <div class="fighters">
+            <div class="battle">
 
-        {% for key, value in round1.items %}
-        {{value.1}}
-        {% endfor %}
+                <h1>Round 16 Winners and Quarter Final Champions</h1>
+                <p>
+                    {% for key, value in round16.items %}
+                    {{value.1}}
+                    {% endfor %}
+                </p>
 
-        {% for key, value in round16.items %}
-        {{value.1}}
-        {% endfor %}
+            </div>
 
+            <div class="logs">
 
-        {% for key, value in quarters.items %}
-        {{value.1}}
-        {% endfor %}
-
-
-        {% for key, value in semis.items %}
-        {{value.1}}
-        {% endfor %}
-
-
-        {% for key, value in finals.items %}
-        {{value.1}}
-        {% endfor %}
-
+                <h1>Logs Round1</h1>
+                {% for log in round16_logs %}
+                {{log}}
+                <br>
+                {% endfor %} 
+        
+            </div>   
+        </div>
     </div>
-    
-    <div class="logs">
 
-        {% for log in round1_logs %}
-        {{log}}
-        <br>
-        {% endfor %}
+{% elif quarters %}
 
+    <div class="whole">
 
-        {% for log in round16_logs %}
-        {{log}}
-        <br>
-        {% endfor %}
+        <div class="buttons">
+            <div class="forms">
+                <form action="{% url 'tournament' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" name="semis">Get Semi Final Winners</button>
+                </form>
+            </div>
+        </div>
 
+        <div class="fighters">
+            <div class="battle">
 
-        {% for log in quarters_logs %}
-        {{log}}
-        <br>
-        {% endfor %}
+                <h1>Round Quarter Final Winners and Semi Final Champions</h1>
+                <p>
+                    {% for key, value in quarters.items %}
+                    {{value.1}}
+                    {% endfor %}
+                </p>
 
+            </div>
 
-        {% for log in semis_logs %}
-        {{log}}
-        <br>
-        {% endfor %}
+            <div class="logs">
 
-
-        {% for log in finals_logs %}
-        {{log}}
-        <br>
-        {% endfor %}
-
-
+                <h1>Logs Quarter Final</h1>
+                {% for log in quarters_logs %}
+                {{log}}
+                <br>
+                {% endfor %} 
+        
+            </div>   
+        </div>
     </div>
-</div>
+
+{% elif semis %}
+
+    <div class="whole">
+
+        <div class="buttons">
+            <div class="forms">
+                <form action="{% url 'tournament' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" name="finals">Get Winner</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="fighters">
+            <div class="battle">
+
+                <h1>Round Semi Final Winners and Final Champions</h1>
+                <p>
+                    {% for key, value in semis.items %}
+                    {{value.1}}
+                    {% endfor %}
+                </p>
+
+            </div>
+
+            <div class="logs">
+
+                <h1>Logs Semi Finals</h1>
+                {% for log in semis_logs %}
+                {{log}}
+                <br>
+                {% endfor %} 
+        
+            </div>   
+        </div>
+    </div>
+
+{% elif finals %}
+
+    <div class="whole">
+
+        <div class="buttons">
+            <div class="forms">
+                <form action="{% url 'tournament' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" name="end_tournament">End Tournament</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="fighters">
+            <div class="battle">
+
+                <h1>Champion:</h1>
+                <p>
+                    {% for card in cards %}
+                        {% for key, value in finals.items %}
+                            {% if value.0 == card.id %}
+                                <img src="{{ card.picture.url }}" alt="{{ card.name }}">
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </p>
+
+            </div>
+
+            <div class="logs">
+
+                <h1>Logs Finals</h1>
+                {% for log in finals_logs %}
+                {{log}}
+                <br>
+                {% endfor %} 
+        
+            </div>   
+        </div>
+    </div>
+
 {% endif %}
+
 {% endblock content %}
 <script src="{% static 'js/jquery-3.6.4.min.js' %}"></script>
 <script src="{% static 'js/tournament.js' %}"></script>

@@ -6,8 +6,24 @@ from .models import Card
 import random
 from django.http.response import JsonResponse
 from django.template.loader import render_to_string
+from django.urls import reverse
+from django.contrib.auth.mixins import AccessMixin
 
 # Create your views here.
+
+class TournamentMixin(AccessMixin):
+    def redirect_user(self, request, *args, **kwargs):
+        if 'card_ids' not in request.session:
+            return redirect(reverse('start'))
+        elif 'bonus_numbers' not in request.session:
+            return redirect(reverse('bonus'))
+        elif 'shuffled' not in request.session:
+            return redirect(reverse('pairs'))
+        else:
+            return super().get(request, *args, **kwargs)
+
+
+
 class Start_view(TemplateView):
     template_name='game/start.html'
 
@@ -89,7 +105,7 @@ class Draft_view(ListView):
 
 """  ######################################################################  """
 
-class Bonus_view(ListView):
+class Bonus_view(TournamentMixin, ListView):
     model=Card
     template_name='game/bonus.html'
 
@@ -236,7 +252,7 @@ class Bonus_view(ListView):
     """  #########################################################################################  """
 
     
-class PairsView(ListView):
+class PairsView(TournamentMixin, ListView):
     template_name='game/pairs.html'
     model=Card
     context_object_name='pairs_list'
@@ -266,7 +282,7 @@ class PairsView(ListView):
 
     """   ########################################################################################  """
     
-class Tournament_view(ListView):
+class Tournament_view(TournamentMixin, ListView):
     template_name='game/tournament.html'
     model=Card
     context_object_name='tournament_list'
@@ -296,13 +312,23 @@ class Tournament_view(ListView):
         
         elif 'semis' in request.POST:
             logs_semis, semis_winners=self.semi_finals(request)
-            context={'quarters_logs': logs_semis, 'semis':semis_winners}
+            context={'semis_logs': logs_semis, 'semis':semis_winners}
             return render(request, self.template_name, context)
         
         elif 'finals' in request.POST:
             logs_finals, winner=self.finals(request)
-            context={'finals_logs': logs_finals, 'finals':winner}
+            card_ids=request.session.get('card_ids')
+            cards=Card.objects.filter(id__in=card_ids)
+            context={'finals_logs': logs_finals, 'finals':winner, 'cards':cards}
             return render(request, self.template_name, context)
+        elif 'end_tournament' in request.POST:
+            del request.session['card_ids']
+            del request.session['bonus_numbers']
+            del request.session['shuffled']
+            cards=[]
+            numbers=[]
+            request.session.modified=True
+            return redirect(reverse('start'))
 
     
     def round1(self, request):
@@ -422,10 +448,8 @@ class Tournament_view(ListView):
             winners[f"round1_winner{num_of_fight}"] = Round1_winner
 
             log.append(f'Fight {num_of_fight} winner: {Round1_winner[1]}')
-            log.append('============================================')
+            log.append('-------------------------------------------------')
             log.append('')
             log.append('')
 
         return log, winners
-
-

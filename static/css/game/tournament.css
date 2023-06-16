@@ -2,14 +2,35 @@
     width: 100%;
     margin: 0;
     display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .fighters {
+    width: 90%;
+    margin: 0% 3% 3% 5%;
+    padding: 10px;
+    border: 2px solid black;
+    text-align: center;
+    display: flex;
+}
+
+.fighters_cont {
+    width: 90%;
+    margin: 0% 3% 3% 5%;
+    padding: 10px;
+    border: 2px solid black;
+    text-align: center;
+}
+
+.battle {
     width: 60%;
     margin: 0% 3% 3% 5%;
     padding: 10px;
     border: 2px solid black;
     text-align: center;
+
 }
 
 .logs {
@@ -27,4 +48,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.battle p img {
+    width: 200px;
 }
