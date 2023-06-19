@@ -25,7 +25,7 @@
 }
 
 .battle {
-    width: 60%;
+    width: 40%;
     margin: 0% 3% 3% 5%;
     padding: 10px;
     border: 2px solid black;
@@ -34,7 +34,7 @@
 }
 
 .logs {
-    width: 30%;
+    width: 50%;
     border: 2px solid black;
     margin: 0% 2% 3% 0%;
 }

@@ -132,108 +132,152 @@ class Bonus_view(TournamentMixin, ListView):
         return render(request, self.template_name, context)
     
     def define_bonuses(self, request):
-        flaster=12
-        zavoj=18
-        napitak_zeleni=24
-        boks=-12
-        boks_crveni=-18
-        napitak_zelenocrni=-24
+        flaster=120
+        zavoj=180
+        napitak_zeleni=240
+        boks=-120
+        boks_crveni=-180
+        napitak_zelenocrni=-240
 
-        mac=6
-        dupli_mac=10
-        napitak_crveni=14
-        zvijezde=-6
-        zvijezde_crvene=-10
-        napitak_crvenocrni=-14
+        mac=20
+        dupli_mac=40
+        napitak_crveni=60
+        zvijezde=-15
+        zvijezde_crvene=-30
+        napitak_crvenocrni=-45
 
-        stit=4
-        oklop=6
-        napitak_plavi=8
-        knock=-4
-        knock_crveni=-6
-        napitak_plavo_crni=-8
+        stit=10
+        oklop=20
+        napitak_plavi=30
+        knock=-10
+        knock_crveni=-20
+        napitak_plavo_crni=-30
+
+        grom=10
+        munja=20
+        napitak_narandzasti=30
+
+        cipele=10
+        cizme=15
+        wound=-10
+        napitak_zuti=+20
+        napitak_crno_zuti=-15
 
         numbers=self.get_random_numbers(request)
         bonuses=[]
         card_ids=request.session.get('card_ids')
         drawn_cards=Card.objects.filter(id__in=card_ids)
-        fighters={f'fighter{num+1}': [card.id, card.name, card.overall, card.health, card.attack, card.deffence] for num, card in enumerate(drawn_cards)}
+        fighters={f'fighter{num+1}': 
+                  [card.id, card.name, card.race, card.tier, card.overall, card.speed, card.health, card.attack, card.deffence, card.crit, card.fatique] 
+                  for num, card in enumerate(drawn_cards)}
         for index, number in enumerate(numbers):
             card_id=index+1
             if number>=1 and number<=200:
                 bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got nothing")
             elif number>200 and number<251:
-                fighters[f'fighter{card_id}'][3]+=flaster
-                fighters[f'fighter{card_id}'][2]+=flaster
-                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got +12 health")
+                fighters[f'fighter{card_id}'][6]+=flaster
+                fighters[f'fighter{card_id}'][4]+=int(flaster/10)
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got +120 health")
             elif number>250 and number<301:
-                fighters[f'fighter{card_id}'][3]+=zavoj
-                fighters[f'fighter{card_id}'][2]+=zavoj
-                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got +18 health")
+                fighters[f'fighter{card_id}'][6]+=zavoj
+                fighters[f'fighter{card_id}'][4]+=int(zavoj/10)
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got +180 health")
             elif number>300 and number<351:
-                fighters[f'fighter{card_id}'][5]+=stit
-                fighters[f'fighter{card_id}'][2]+=stit
-                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got +4 deffence")
+                fighters[f'fighter{card_id}'][8]+=stit
+                fighters[f'fighter{card_id}'][4]+=int(stit/2)
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got +10 deffence")
             elif number>350 and number<401:
-                fighters[f'fighter{card_id}'][5]+=oklop
-                fighters[f'fighter{card_id}'][2]+=oklop
-                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got +6 deffence")
+                fighters[f'fighter{card_id}'][8]+=oklop
+                fighters[f'fighter{card_id}'][4]+=int(oklop/2)
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got +20 deffence")
             elif number>400 and number<451:
+                fighters[f'fighter{card_id}'][7]+=mac
                 fighters[f'fighter{card_id}'][4]+=mac
-                fighters[f'fighter{card_id}'][2]+=mac
-                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got +6 attack")
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got +20 attack")
             elif number>450 and number<501:
+                fighters[f'fighter{card_id}'][7]+=dupli_mac
                 fighters[f'fighter{card_id}'][4]+=dupli_mac
-                fighters[f'fighter{card_id}'][2]+=dupli_mac
-                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got +10 attack")
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got +40 attack")
             elif number>500 and number<551:
-                fighters[f'fighter{card_id}'][3]+=boks
-                fighters[f'fighter{card_id}'][2]+=boks
-                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got -12 health")
+                fighters[f'fighter{card_id}'][6]+=boks
+                fighters[f'fighter{card_id}'][4]+=int(boks/10)
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got -120 health")
             elif number>550 and number<601:
-                fighters[f'fighter{card_id}'][3]+=boks_crveni
-                fighters[f'fighter{card_id}'][2]+=boks_crveni
-                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got -18 health")
+                fighters[f'fighter{card_id}'][6]+=boks_crveni
+                fighters[f'fighter{card_id}'][4]+=int(boks_crveni/10)
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got -180 health")
             elif number>600 and number<651:
-                fighters[f'fighter{card_id}'][5]+=knock
-                fighters[f'fighter{card_id}'][2]+=knock
-                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got -4 deffence")
+                fighters[f'fighter{card_id}'][8]+=knock
+                fighters[f'fighter{card_id}'][4]+=int(knock/2)
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got -10 deffence")
             elif number>650 and number<701:
-                fighters[f'fighter{card_id}'][5]+=knock_crveni
-                fighters[f'fighter{card_id}'][2]+=knock_crveni
-                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got -6 deffence")
+                fighters[f'fighter{card_id}'][8]+=knock_crveni
+                fighters[f'fighter{card_id}'][4]+=int(knock_crveni/2)
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got -20 deffence")
             elif number>700 and number<751:
+                fighters[f'fighter{card_id}'][7]+=zvijezde
                 fighters[f'fighter{card_id}'][4]+=zvijezde
-                fighters[f'fighter{card_id}'][2]+=zvijezde
-                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got -6 attack")
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got -15 attack")
             elif number>750 and number<801:
+                fighters[f'fighter{card_id}'][7]+=zvijezde_crvene
                 fighters[f'fighter{card_id}'][4]+=zvijezde_crvene
-                fighters[f'fighter{card_id}'][2]+=zvijezde_crvene
-                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got -10 attack")
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got -30 attack")
             elif number>800 and number<834:
+                fighters[f'fighter{card_id}'][7]+=napitak_crveni
                 fighters[f'fighter{card_id}'][4]+=napitak_crveni
-                fighters[f'fighter{card_id}'][2]+=napitak_crveni
-                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got +14 attack")
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got +60 attack")
             elif number>833 and number<867:
-                fighters[f'fighter{card_id}'][5]+=napitak_plavi
-                fighters[f'fighter{card_id}'][2]+=napitak_plavi
-                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got +8 deffence")
+                fighters[f'fighter{card_id}'][8]+=napitak_plavi
+                fighters[f'fighter{card_id}'][4]+=int(napitak_plavi/2)
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got +30 deffence")
             elif number>866 and number<900:
-                fighters[f'fighter{card_id}'][3]+=napitak_zeleni
-                fighters[f'fighter{card_id}'][2]+=napitak_zeleni
-                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got +24 health")
+                fighters[f'fighter{card_id}'][6]+=napitak_zeleni
+                fighters[f'fighter{card_id}'][4]+=int(napitak_zeleni/10)
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got +240 health")
             elif number>899 and number<934:
+                fighters[f'fighter{card_id}'][7]+=napitak_crvenocrni
                 fighters[f'fighter{card_id}'][4]+=napitak_crvenocrni
-                fighters[f'fighter{card_id}'][2]+=napitak_crvenocrni
-                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got -14 attack")
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got -45 attack")
             elif number>933 and number<967:
-                fighters[f'fighter{card_id}'][3]+=napitak_zelenocrni
-                fighters[f'fighter{card_id}'][2]+=napitak_zelenocrni
-                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got -24 health")
+                fighters[f'fighter{card_id}'][6]+=napitak_zelenocrni
+                fighters[f'fighter{card_id}'][4]+=int(napitak_zelenocrni/10)
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got -240 health")
             elif number>966 and number<1001:
-                fighters[f'fighter{card_id}'][5]+=napitak_plavo_crni
-                fighters[f'fighter{card_id}'][2]+=napitak_plavo_crni
-                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got -8 deffence")
+                fighters[f'fighter{card_id}'][8]+=napitak_plavo_crni
+                fighters[f'fighter{card_id}'][4]+=int(napitak_plavo_crni/2)
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got -30 deffence")
+            elif number>1000 and number<1101:
+                fighters[f'fighter{card_id}'][9]+=grom
+                fighters[f'fighter{card_id}'][4]+=int(grom/2)
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got 10 crit chance")
+            elif number>1100 and number<1201:
+                fighters[f'fighter{card_id}'][9]+=munja
+                fighters[f'fighter{card_id}'][4]+=int(munja/2)
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got 20% crit chance")
+            elif number>1200 and number<1301:
+                fighters[f'fighter{card_id}'][5]+=cipele
+                fighters[f'fighter{card_id}'][4]+=int(cipele/2)
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got 10 speed")
+            elif number>1300 and number<1401:
+                fighters[f'fighter{card_id}'][5]+=cizme
+                fighters[f'fighter{card_id}'][4]+=int(cizme/2)
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got 15 speed")
+            elif number>1400 and number<1501:
+                fighters[f'fighter{card_id}'][5]+=wound
+                fighters[f'fighter{card_id}'][4]+=int(wound/2)
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got -10 speed")
+            elif number>1500 and number<1534:
+                fighters[f'fighter{card_id}'][9]+=napitak_narandzasti
+                fighters[f'fighter{card_id}'][4]+=int(napitak_narandzasti/2)
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got 30% crit chance")
+            elif number>1533 and number<1567:
+                fighters[f'fighter{card_id}'][5]+=napitak_zuti
+                fighters[f'fighter{card_id}'][4]+=int(napitak_zuti/2)
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got 20 speed")
+            elif number>1566 and number<1601:
+                fighters[f'fighter{card_id}'][5]+=napitak_crno_zuti
+                fighters[f'fighter{card_id}'][4]+=int(napitak_crno_zuti/2)
+                bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got -15 speed")
             else:
                 bonuses.append('not valid')
                 
@@ -242,7 +286,7 @@ class Bonus_view(TournamentMixin, ListView):
     def get_random_numbers(self, request):
         if 'bonus_numbers' not in request.session:
             num_of_numbers = 32
-            numbers = [random.randint(1, 1000) for _ in range(num_of_numbers)]
+            numbers = [random.randint(1, 1600) for _ in range(num_of_numbers)]
             request.session['bonus_numbers'] = list(numbers)
         else:
             numbers = list(request.session['bonus_numbers'])
@@ -365,73 +409,88 @@ class Tournament_view(TournamentMixin, ListView):
         winners={}
 
         for i in range(0, num_fighters-1, 2):
-            f1 = list(fighters.values())[i]
-            f2 = list(fighters.values())[i+1]
+            fighter1 = list(fighters.values())[i]
+            fighter2 = list(fighters.values())[i+1]
             num_of_fight=int((i/2)+1)
+
+            msg_fat_fighter1, fighter1=self.apply_fatigue(fighter1)
+            msg_fat_fighter2, fighter2=self.apply_fatigue(fighter2)
+
+
+            if fighter1[5] > fighter2[5]:
+                f1=fighter1
+                f2=fighter2
+            else:
+                f2=fighter1
+                f1=fighter2
+
+            pair=[f1, f2]
+            race_bonuses, msg_race_bonus=self.apply_race_bonus(pair)
+            f1=race_bonuses[0]
+            f2=race_bonuses[1]
 
             f1_id=f1[0]
             f1_name=f1[1]
-            f1_overall=f1[2]
-            f1_hp=f1[3]
-            f1_att=f1[4]
-            f1_deff=f1[5]
+            f1_race=f1[2]
+            f1_tier=f1[3]
+            f1_overall=f1[4]
+            f1_speed=f1[5]
+            f1_hp=f1[6]
+            f1_att=f1[7]
+            f1_deff=f1[8]
+            f1_crit=f1[9]
+            f1_fat=f1[10]
 
             f2_id=f2[0]
             f2_name=f2[1]
-            f2_overall=f2[2]
-            f2_hp=f2[3]
-            f2_att=f2[4]
-            f2_deff=f2[5]
+            f2_race=f2[2]
+            f2_tier=f2[3]
+            f2_overall=f2[4]
+            f2_speed=f2[5]
+            f2_hp=f2[6]
+            f2_att=f2[7]
+            f2_deff=f2[8]
+            f2_crit=f2[9]
+            f2_fat=f2[10]
 
             round=0
+
+            if f1_speed > f2_speed:
+                fighter1=f1
+            else:
+                fighter1=f2
 
             log.append(f'Fight {num_of_fight}: {f1_name} vs {f2_name}')
             log.append(f'--------------------------------------------')
             log.append(f'Stats:')
-            log.append(f'{f1_name}: Overall: {f1_overall} Hp: {f1_hp} Att: {f1_att} Deff: {f1_deff}')
-            log.append(f'{f2_name}: Overall: {f2_overall} Hp: {f2_hp} Att: {f2_att} Deff: {f2_deff}')
+            log.append(f'{f1_name}: Overall: {f1_overall} Race: {f1_race} Speed: {f1_speed} Hp: {f1_hp} Att: {f1_att} Deff: {f1_deff} Crit: {f1_crit} Fatigue: {f1_fat} {msg_fat_fighter1}')
+            log.append(f'{f2_name}: Overall: {f2_overall} Race: {f2_race} Speed: {f2_speed} Hp: {f2_hp} Att: {f2_att} Deff: {f2_deff} Crit: {f2_crit} Fatigue: {f1_fat} {msg_fat_fighter2}')
+            log.append(f'{msg_race_bonus}')
 
-            while round < 20 and f1_hp > 0 and f2_hp > 0: 
+            while round < 30 and f1_hp > 0 and f2_hp > 0: 
                 round+=1
                 log.append(f'----------------')
                 log.append(f'Round{round} starts!')
 
-                if f1_att<=f2_deff and f2_att<=f1_deff:
-                    f2_hp=0
-                    f1_hp=int(f1_hp/2)
-                    f1_att=int(f1_hp/2)
-                    f1_deff=int(f1_hp/2)
-                    f1_overall=f1_hp+f1_att+f1_deff
-                    log.append(f'Both fighters have stronger armor than enemy attack, luck of draw decided the winner is {f1_name}')
-                    break
-                elif f1_att<=f2_deff:
-                    f2_hp=f2_hp
-                    f1_hp=0
-                    log.append(f'{f1_name} has lower attack {f1_att} than {f2_name} deff {f2_deff} so the winner with full hp is {f2_name}')
-                    break
-                elif f2_att<=f1_deff:
-                    f1_hp=f1_hp
-                    f2_hp=0
-                    log.append(f'{f2_name} has lower attack {f2_att} than {f1_name} deff {f1_deff} so the winner with full hp is {f1_name}')
-                    break
-                else:
-                    f2_hp-=f1_att-f2_deff
-                    log.append(f'{f1_name} attacks. {f1_att} attack damage - {f2_deff} damage blocked = {f1_att-f2_deff} damage dealt')
-                    log.append(f'{f2_name} health left: {f2_hp}')
-                    if f2_hp<=0:
-                        f2_hp=0
-                        log.append(f'{f2_name} died')
-                        f1_overall=f1_hp+f1_att+f1_deff
-                        break
 
-                    f1_hp-=f2_att-f1_deff
-                    log.append(f'{f2_name} attacks. {f2_att} attack damage - {f1_deff} damage blocked = {f2_att-f1_deff} damage dealt')
-                    log.append(f'{f1_name} health left: {f1_hp}')
-                    if f1_hp<=0:
-                        f1_hp=0
-                        log.append(f'{f1_name} died')
-                        f2_overall=f2_hp+f2_att+f2_deff
-                        break
+                f2_hp-=f1_att-f2_deff
+                log.append(f'{f1_name} is faster so he will attack first.')
+                log.append(f'{f1_name} {f1_att} attack damage - {f2_deff} deffence = {f1_att*((100-f2_deff)/100)} damage dealt')
+                log.append(f'{f2_name} health left: {f2_hp}')
+                if f2_hp<=0:
+                    f2_hp=0
+                    log.append(f'{f2_name} died')
+                    f1_overall=f1_hp+f1_att+f1_deff
+                    break
+
+                f1_hp-=f2_att-f1_deff
+                log.append(f'{f2_name} attacks. {f2_att} attack damage - {f1_deff} damage blocked = {f2_att-f1_deff} damage dealt')
+                log.append(f'{f1_name} health left: {f1_hp}')
+                if f1_hp<=0:
+                    f1_hp=0
+                    log.append(f'{f1_name} died')
+                    f2_overall=f2_hp+f2_att+f2_deff
+                    break
             if f1_hp > 0:
                 log.append(f'{f1_name} health left: {f1_hp}.')
                 log.append(f'')
@@ -453,3 +512,98 @@ class Tournament_view(TournamentMixin, ListView):
             log.append('')
 
         return log, winners
+    
+    def check_crit(self, fighter):
+        crit_chance=fighter[9]
+        msg=''
+        
+        if crit_chance==10:
+            crit_number=random.randint(1,100)
+            if crit_number<10:
+                fighter[7]*=1.5
+                msg='critical hit!'
+            return fighter, msg
+        elif crit_chance==20:
+            crit_number=random.randint(1,100)
+            if crit_number<20:
+                fighter[7]*=1.5
+                msg='critical hit!'
+            return fighter, msg
+        elif crit_chance==30:
+            crit_number=random.randint(1,100)
+            if crit_number<30:
+                fighter[7]*=1.5
+                msg='critical hit!'
+            return fighter, msg
+
+
+
+
+        return fighter
+
+    def apply_fatigue(self, fighter):
+        msg=''
+
+        fatigue = fighter[10]
+
+        if fatigue == 1:
+            fighter[5] *= 0.8
+            fighter[7] *= 0.9
+            msg='Fighter has lowered speed by 20% nd attack by 10% due to fatigue from previous fight'
+        elif fatigue == 2:
+            fighter[5] *= 0.7
+            fighter[7] *= 0.85
+            msg='Fighter has lowered speed by 30% nd attack by 15% due to fatigue from previous fight'
+        elif fatigue == 3:
+            fighter[5] *= 0.6
+            fighter[7] *= 0.8
+            msg='Fighter has lowered speed by 40% nd attack by 20% due to fatigue from previous fight'
+        elif fatigue == 4:
+            fighter[5] *= 0.5
+            fighter[7] *= 0.75
+            msg='Fighter has lowered speed by 50% nd attack by 25% due to fatigue from previous fight'
+
+        return msg, fighter
+    
+    def apply_race_bonus(self, pair):
+        f1=pair[0]
+        f2=pair[1]
+        msg=''
+        if f1[2]=='Human' and f2[2]=='Alien':
+            f1[6]+=120
+            f1[4]+=12
+            msg='Human gain +120 hp bonus against Alien'
+        elif f1[2]=='Alien' and f2[2]=='Fantasy':
+            f1[7]+=20
+            f1[4]+=20
+            msg='Alien gain +20 attack bonus against Fantasy'
+        elif f1[2]=='Fantasy' and f2[2]=='Creature':
+            f1[8]+=30
+            f1[4]+=15
+            msg='Fantasy gain +30 deff bonus against Creature'
+        elif f1[2]=='Creature' and f2[2]=='Human':
+            f1[7]+=20
+            f1[4]+=20
+            msg='Creature gain +20 attack bonus against Human'
+        elif f2[2]=='Human' and f1[2]=='Alien':
+            f2[6]+=120
+            f2[4]+=12
+            msg='Human gain +120 health bonus against Alien'
+        elif f2[2]=='Alien' and f1[2]=='Fantasy':
+            f2[7]+=20
+            f2[4]+=20
+            msg='Alien gain +20 attack bonus against Fantasy'
+        elif f2[2]=='Fantasy' and f1[2]=='Creature':
+            f2[8]+=30
+            f2[4]+=15
+            msg='Fantasy gain +30 deff bonus against Creature'
+        elif f2[2]=='Creature' and f1[2]=='Human':
+            f2[7]+=20
+            f2[4]+=20
+            msg='Creature gain +20 attack bonus against Human'
+
+        pair1=[f1, f2]
+
+        return pair1, msg
+
+

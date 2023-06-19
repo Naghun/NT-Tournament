@@ -16,18 +16,24 @@
 
     <table>
         <tr>
-            <th>No</th>
+            <th>ID</th>
             <th>Name</th>
+            <th>Race</th>
+            <th>Tier</th>
             <th>Overall</th>
+            <th>Speed</th>
             <th>Health</th>
             <th>Attack</th>
             <th>Deffence</th>
         </tr>
-        {% for card in data_of_cards %}
+        {% for card in data_of_cards|dictsort:"attack" %}
         <tr>
-            <td>{{forloop.counter}}</td>
+            <td>{{card.id}}</td>
             <td>{{card.name}}</td>
+            <td>{{card.race}}</td>
+            <td>{{card.tier}}</td>
             <td>{{card.overall}}</td>
+            <td>{{card.speed}}</td>
             <td>{{card.health}}</td>
             <td>{{card.attack}}</td>
             <td>{{card.deffence}}</td>
