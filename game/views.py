@@ -11,16 +11,23 @@ from django.contrib.auth.mixins import AccessMixin
 
 # Create your views here.
 
-class TournamentMixin(AccessMixin):
-    def redirect_user(self, request, *args, **kwargs):
-        if 'card_ids' not in request.session:
-            return redirect(reverse('start'))
-        elif 'bonus_numbers' not in request.session:
-            return redirect(reverse('bonus'))
-        elif 'shuffled' not in request.session:
-            return redirect(reverse('pairs'))
-        else:
-            return super().get(request, *args, **kwargs)
+class DraftMixin:
+    def dispatch(self, request, *args, **kwargs):
+        if 'card_ids' not in request.session or not request.session['card_ids']:
+            return redirect('draft')
+        return super().dispatch(request, *args, **kwargs)
+    
+class BonusMixin:
+    def dispatch(self, request, *args, **kwargs):
+        if 'bonus_numbers' not in request.session or not request.session['bonus_numbers']:
+            return redirect('bonus')
+        return super().dispatch(request, *args, **kwargs)
+    
+class PairsMixin:
+    def dispatch(self, request, *args, **kwargs):
+        if 'shuffled' not in request.session or not request.session['shuffled']:
+            return redirect('pairs')
+        return super().dispatch(request, *args, **kwargs)
 
 
 
@@ -105,7 +112,7 @@ class Draft_view(ListView):
 
 """  ######################################################################  """
 
-class Bonus_view(TournamentMixin, ListView):
+class Bonus_view(DraftMixin, ListView):
     model=Card
     template_name='game/bonus.html'
 
@@ -232,7 +239,7 @@ class Bonus_view(TournamentMixin, ListView):
                 bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got +30 deffence")
             elif number>866 and number<900:
                 fighters[f'fighter{card_id}'][6]+=napitak_zeleni
-                fighters[f'fighter{card_id}'][4]+=int(napitak_zeleni/10)
+                fighters[f'fighter{card_id}'][4]+=int((napitak_zeleni/10)/3)
                 bonuses.append(f"{fighters[f'fighter{index+1}'][1]} got +240 health")
             elif number>899 and number<934:
                 fighters[f'fighter{card_id}'][7]+=napitak_crvenocrni
@@ -296,7 +303,7 @@ class Bonus_view(TournamentMixin, ListView):
     """  #########################################################################################  """
 
     
-class PairsView(TournamentMixin, ListView):
+class PairsView(DraftMixin, BonusMixin, ListView):
     template_name='game/pairs.html'
     model=Card
     context_object_name='pairs_list'
@@ -326,7 +333,7 @@ class PairsView(TournamentMixin, ListView):
 
     """   ########################################################################################  """
     
-class Tournament_view(TournamentMixin, ListView):
+class Tournament_view(DraftMixin, BonusMixin, PairsMixin, ListView):
     template_name='game/tournament.html'
     model=Card
     context_object_name='tournament_list'
