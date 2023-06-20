@@ -413,9 +413,6 @@ class Tournament_view(TournamentMixin, ListView):
             fighter2 = list(fighters.values())[i+1]
             num_of_fight=int((i/2)+1)
 
-            msg_fat_fighter1, fighter1=self.apply_fatigue(fighter1)
-            msg_fat_fighter2, fighter2=self.apply_fatigue(fighter2)
-
 
             if fighter1[5] > fighter2[5]:
                 f1=fighter1
@@ -440,6 +437,7 @@ class Tournament_view(TournamentMixin, ListView):
             f1_deff=f1[8]
             f1_crit=f1[9]
             f1_fat=f1[10]
+            
 
             f2_id=f2[0]
             f2_name=f2[1]
@@ -455,6 +453,9 @@ class Tournament_view(TournamentMixin, ListView):
 
             round=0
 
+            msg_fat_fighter1, f1_att, f1_speed=self.apply_fatigue(f1_att, f1_speed, f1_fat)
+            msg_fat_fighter2, f2_att, f2_speed=self.apply_fatigue(f2_att, f2_speed, f2_fat)
+
             if f1_speed > f2_speed:
                 fighter1=f1
             else:
@@ -462,35 +463,130 @@ class Tournament_view(TournamentMixin, ListView):
 
             log.append(f'Fight {num_of_fight}: {f1_name} vs {f2_name}')
             log.append(f'--------------------------------------------')
-            log.append(f'Stats:')
-            log.append(f'{f1_name}: Overall: {f1_overall} Race: {f1_race} Speed: {f1_speed} Hp: {f1_hp} Att: {f1_att} Deff: {f1_deff} Crit: {f1_crit} Fatigue: {f1_fat} {msg_fat_fighter1}')
-            log.append(f'{f2_name}: Overall: {f2_overall} Race: {f2_race} Speed: {f2_speed} Hp: {f2_hp} Att: {f2_att} Deff: {f2_deff} Crit: {f2_crit} Fatigue: {f1_fat} {msg_fat_fighter2}')
             log.append(f'{msg_race_bonus}')
+            log.append(f'{f1_name} Fatigue: {f1_fat} - {msg_fat_fighter1}')
+            log.append(f'{f2_name} Fatigue: {f2_fat} - {msg_fat_fighter2}')
+            log.append('')
+            log.append(f'Stats:')
+            log.append(f'{f1_name}: Overall: {f1_overall} Race: "{f1_race}" Speed: {f1_speed} Hp: {f1_hp} Att: {f1_att} Deff: {f1_deff} Crit: {f1_crit} ')
+            log.append(f'{f2_name}: Overall: {f2_overall} Race: "{f2_race}" Speed: {f2_speed} Hp: {f2_hp} Att: {f2_att} Deff: {f2_deff} Crit: {f2_crit} ')
+            log.append(f'{f1_name} is faster and attacks first.')
 
             while round < 30 and f1_hp > 0 and f2_hp > 0: 
                 round+=1
+                if round<8:
+                    fatigue=0
+                elif round>=7 and round<=12:
+                    fatigue=1
+                elif round>=13 and round<=18:
+                    fatigue=2
+                elif round>=19 and round<=25:
+                    fatigue=3
+                elif round>=20:
+                    fatigue=4
+
                 log.append(f'----------------')
-                log.append(f'Round{round} starts!')
+                log.append(f'Round{round}:')
+
+                # in case that f1 has crit but f2 no crit
+                if f1_crit>0 and f2_crit==0:
+
+                    f1_catt, msg_crit1=self.check_crit(f1_att, f1_crit)
+                    f2_hp-=int(f1_catt*((100-f2_deff)/100))
+                    log.append(f'{f1_name} has {f1_catt} attack damage {msg_crit1}, {f2_name} has {f2_deff}% deffence = {int(f1_catt*((100-f2_deff)/100))} damage dealt')
+                    log.append(f'{f2_name} health left: {int(f2_hp)}')
+                    f1_catt=f1_att
+
+                    if f2_hp<=0:
+                        f2_hp=0
+                        log.append(f'{f2_name} died')
+                        f1_overall=int((f1_att+f1_deff+f1_speed+(f1_hp/10))/3)
+                        break
+
+                    f1_hp-=int(f2_att*((100-f1_deff)/100))
+                    log.append(f'{f2_name} attacks. {f2_att} attack damage {f1_name} has {f1_deff}% deffence = {int(f2_att*((100-f1_deff)/100))} damage dealt')
+                    log.append(f'{f1_name} health left: {int(f1_hp)}')
+
+                    if f1_hp<=0:
+                        f1_hp=0
+                        log.append(f'{f1_name} died')
+                        f2_overall=int(((f2_hp/10)+f2_att+f2_deff+f2_speed)/3)
+                        break
+
+                #f2 has crit and f1 no crit
+                
+                elif f2_crit>0 and f1_crit==0:
+
+                    f2_hp-=int(f1_att*((100-f2_deff)/100))
+                    log.append(f'{f1_name} has {f1_att} attack damage , {f2_name} has {f2_deff}% deffence = {int(f1_att*((100-f2_deff)/100))} damage dealt')
+                    log.append(f'{f2_name} health left: {int(f2_hp)}')
+
+                    if f2_hp<=0:
+                        f2_hp=0
+                        log.append(f'{f2_name} died')
+                        f1_overall=int((f1_att+f1_deff+f1_speed+(f1_hp/10))/3)
+                        break
+                    
+                    f2_catt, msg_crit2 = self.check_crit(f2_att, f2_crit)
+                    f1_hp-=int(f2_catt*((100-f1_deff)/100))
+                    log.append(f'{f2_name} attacks. {f2_catt} attack damage {msg_crit2}, {f1_name} has {f1_deff}% deffence = {int(f2_catt*((100-f1_deff)/100))} damage dealt')
+                    log.append(f'{f1_name} health left: {int(f1_hp)}')
+                    f2_catt=f2_att
+
+                    if f1_hp<=0:
+                        f1_hp=0
+                        log.append(f'{f1_name} died')
+                        f2_overall=int(((f2_hp/10)+f2_att+f2_deff+f2_speed)/3)
+                        break
+
+                # both fighters have crit
+                elif f1_crit>0 and f2_crit>0:
+                    f1_catt, msg_crit1=self.check_crit(f1_att, f1_crit)
+                    f2_hp-=int(f1_catt*((100-f2_deff)/100))
+                    log.append(f'{f1_name} has {f1_catt} attack damage {msg_crit1}, {f2_name} has {f2_deff}% deffence = {int(f1_catt*((100-f2_deff)/100))} damage dealt')
+                    log.append(f'{f2_name} health left: {int(f2_hp)}')
+                    f1_catt=f1_att
+
+                    if f2_hp<=0:
+                        f2_hp=0
+                        log.append(f'{f2_name} died')
+                        f1_overall=int((f1_att+f1_deff+f1_speed+(f1_hp/10))/3)
+                        break
+
+                    f2_catt, msg_crit2 = self.check_crit(f2_att, f2_crit)
+                    f1_hp-=int(f2_catt*((100-f1_deff)/100))
+                    log.append(f'{f2_name} attacks. {f2_catt} attack damage {msg_crit2}, {f1_name} has {f1_deff}% deffence = {int(f2_catt*((100-f1_deff)/100))} damage dealt')
+                    log.append(f'{f1_name} health left: {int(f1_hp)}')
+                    f2_catt=f2_att
+
+                    if f1_hp<=0:
+                        f1_hp=0
+                        log.append(f'{f1_name} died')
+                        f2_overall=int(((f2_hp/10)+f2_att+f2_deff+f2_speed)/3)
+                        break
 
 
-                f2_hp-=f1_att-f2_deff
-                log.append(f'{f1_name} is faster so he will attack first.')
-                log.append(f'{f1_name} {f1_att} attack damage - {f2_deff} deffence = {f1_att*((100-f2_deff)/100)} damage dealt')
-                log.append(f'{f2_name} health left: {f2_hp}')
-                if f2_hp<=0:
-                    f2_hp=0
-                    log.append(f'{f2_name} died')
-                    f1_overall=f1_hp+f1_att+f1_deff
-                    break
+                #no crits in match
+                else:
 
-                f1_hp-=f2_att-f1_deff
-                log.append(f'{f2_name} attacks. {f2_att} attack damage - {f1_deff} damage blocked = {f2_att-f1_deff} damage dealt')
-                log.append(f'{f1_name} health left: {f1_hp}')
-                if f1_hp<=0:
-                    f1_hp=0
-                    log.append(f'{f1_name} died')
-                    f2_overall=f2_hp+f2_att+f2_deff
-                    break
+                    f2_hp-=int(f1_att*((100-f2_deff)/100))
+                    log.append(f'{f1_name} has {f1_att} attack damage {f2_name} has {f2_deff}% deffence = {int(f1_att*((100-f2_deff)/100))} damage dealt')
+                    log.append(f'{f2_name} health left: {int(f2_hp)}')
+                    if f2_hp<=0:
+                        f2_hp=0
+                        log.append(f'{f2_name} died')
+                        f1_overall=int((f1_att+f1_deff+f1_speed+(f1_hp/10))/3)
+                        break
+
+                    f1_hp-=int(f2_att*((100-f1_deff)/100))
+                    log.append(f'{f2_name} attacks. {f2_att} attack damage {f1_name} has {f1_deff}% deffence = {int(f2_att*((100-f1_deff)/100))} damage dealt')
+                    log.append(f'{f1_name} health left: {int(f1_hp)}')
+                    if f1_hp<=0:
+                        f1_hp=0
+                        log.append(f'{f1_name} died')
+                        f2_overall=int(((f2_hp/10)+f2_att+f2_deff+f2_speed)/3)
+                        break
+
             if f1_hp > 0:
                 log.append(f'{f1_name} health left: {f1_hp}.')
                 log.append(f'')
@@ -499,12 +595,28 @@ class Tournament_view(TournamentMixin, ListView):
                 log.append(f'{f2_name} health left: {f2_hp}')
                 log.append(f'')
 
-            if f1_hp > 0:
-                Round1_winner = [f1_id, f1_name, f1_overall, f1_hp, f1_att, f1_deff]
-            elif f2_hp > 0:
-                Round1_winner = [f2_id, f2_name, f2_overall, f2_hp, f2_att, f2_deff]
+            f1_fat=fatigue
+            f2_fat=fatigue
+
+
+            fighter1=[f1_id, f1_name, f1_race, f1_tier, f1_overall, f1_speed, f1_hp, f1_att, f1_deff, f1_crit, f1_fat]
+            fighter2=[f2_id, f2_name, f2_race, f2_tier, f2_overall, f2_speed, f2_hp, f2_att, f2_deff, f2_crit, f2_fat]
+            pair=[fighter1, fighter2]
+            f1, f2=self.revert_class_bonus(pair)
+
+            fatigue=0
+
+            if f1[6] > 0:
+                Round1_winner = f1
+                if f1[10] > 0:
+                    log.append(f'due to fighting for long time and exhaustion, {f1_name} will get level {f1_fat} fatigue minuses')
+            elif f2[6] > 0:
+                Round1_winner = f2
+                if f2[10] > 0:
+                    log.append(f'due to fighting for long time and exhaustion, {f2_name} will get level {f2_fat} fatigue minuses')
 
             winners[f"round1_winner{num_of_fight}"] = Round1_winner
+
 
             log.append(f'Fight {num_of_fight} winner: {Round1_winner[1]}')
             log.append('-------------------------------------------------')
@@ -513,57 +625,67 @@ class Tournament_view(TournamentMixin, ListView):
 
         return log, winners
     
-    def check_crit(self, fighter):
-        crit_chance=fighter[9]
+    def check_crit(self, f_att, f_crit):
+        crit_chance=f_crit
+        f_catt=f_att
         msg=''
         
         if crit_chance==10:
             crit_number=random.randint(1,100)
             if crit_number<10:
-                fighter[7]*=1.5
-                msg='critical hit!'
-            return fighter, msg
+                f_catt=f_att*1.5
+                msg='-Critical hit!'
+            return f_catt, msg
         elif crit_chance==20:
             crit_number=random.randint(1,100)
             if crit_number<20:
-                fighter[7]*=1.5
-                msg='critical hit!'
-            return fighter, msg
+                f_catt=f_att*1.5
+                msg='-Critical hit!'
+            return f_catt, msg
         elif crit_chance==30:
             crit_number=random.randint(1,100)
             if crit_number<30:
-                fighter[7]*=1.5
-                msg='critical hit!'
-            return fighter, msg
+                f_catt=f_att*1.5
+                msg='-Critical hit!'
+            return f_catt, msg
 
-
-
-
-        return fighter
-
-    def apply_fatigue(self, fighter):
+    def apply_fatigue(self, f_att, f_speed, f_fat):
         msg=''
 
-        fatigue = fighter[10]
+        fatigue = f_fat
+        f_att=f_att
+        f_speed=f_speed
 
-        if fatigue == 1:
-            fighter[5] *= 0.8
-            fighter[7] *= 0.9
-            msg='Fighter has lowered speed by 20% nd attack by 10% due to fatigue from previous fight'
+        if fatigue == 0:
+            msg='Fighter has no fatigue minuses'
+            f_speed = f_speed
+            f_att= f_att
+        elif fatigue == 1:
+            f_speed *= 0.8
+            f_speed=int(f_speed)
+            f_att *= 0.9
+            f_att=int(f_att)
+            msg='Due to fatigue fighter will have 20% speed and 10% attack minuses'
         elif fatigue == 2:
-            fighter[5] *= 0.7
-            fighter[7] *= 0.85
-            msg='Fighter has lowered speed by 30% nd attack by 15% due to fatigue from previous fight'
+            f_speed *= 0.7
+            f_speed=int(f_speed)
+            f_att *= 0.85
+            f_att=int(f_att)
+            msg='Due to fatigue fighter will have 30% speed and 15% attack minuses'
         elif fatigue == 3:
-            fighter[5] *= 0.6
-            fighter[7] *= 0.8
-            msg='Fighter has lowered speed by 40% nd attack by 20% due to fatigue from previous fight'
+            f_speed *= 0.6
+            f_speed=int(f_speed)
+            f_att *= 0.8
+            f_att=int(f_att)
+            msg='Due to fatigue fighter will have 40% speed and 20% attack minuses'
         elif fatigue == 4:
-            fighter[5] *= 0.5
-            fighter[7] *= 0.75
-            msg='Fighter has lowered speed by 50% nd attack by 25% due to fatigue from previous fight'
+            f_speed *= 0.5
+            f_speed=int(f_speed)
+            f_att *= 0.75
+            f_att=int(f_att)
+            msg='Due to fatigue fighter will have 50% speed and 25% attack minuses'
 
-        return msg, fighter
+        return msg, f_att, f_speed
     
     def apply_race_bonus(self, pair):
         f1=pair[0]
@@ -601,9 +723,42 @@ class Tournament_view(TournamentMixin, ListView):
             f2[7]+=20
             f2[4]+=20
             msg='Creature gain +20 attack bonus against Human'
+        else:
+            msg='No fighter gets race bonuses'
 
         pair1=[f1, f2]
 
         return pair1, msg
 
+    def revert_class_bonus(self, pair):
+        f1=pair[0]
+        f2=pair[1]
+        if f1[2]=='Human' and f2[2]=='Alien':
+            f1[6]-=120
+            f1[4]-=12
+        elif f1[2]=='Alien' and f2[2]=='Fantasy':
+            f1[7]-=20
+            f1[4]-=20
+        elif f1[2]=='Fantasy' and f2[2]=='Creature':
+            f1[8]-=30
+            f1[4]-=15
+        elif f1[2]=='Creature' and f2[2]=='Human':
+            f1[7]-=20
+            f1[4]-=20
+        elif f2[2]=='Human' and f1[2]=='Alien':
+            f2[6]-=120
+            f2[4]-=12
+        elif f2[2]=='Alien' and f1[2]=='Fantasy':
+            f2[7]-=20
+            f2[4]-=20
+        elif f2[2]=='Fantasy' and f1[2]=='Creature':
+            f2[8]-=30
+            f2[4]-=15
+        elif f2[2]=='Creature' and f1[2]=='Human':
+            f2[7]-=20
+            f2[4]-=20
+
+
+
+        return f1, f2
 
