@@ -1,6 +1,6 @@
 .whole {
     width: 100%;
-    height: 100vh;
+    height: 105vh;
     background-color: rgb(21, 164, 114);
     display: flex;
     flex-direction: column;
@@ -64,7 +64,7 @@ h3 {
 }
 
 .second form {
-    width: 80%;
+    width: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -72,7 +72,7 @@ h3 {
 }
 
 .second form button {
-    width: 30%;
+    width: 100%;
     margin: 0% 2%;
     height: 40px;
     background-color: rgb(147, 157, 147);
@@ -87,7 +87,7 @@ h3 {
 }
 
 .second a {
-    width: 30%;
+    width: 40%;
     margin: 0% 2%;
     background-color: rgb(21, 164, 114);
 }

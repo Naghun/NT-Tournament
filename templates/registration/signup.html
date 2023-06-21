@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/registration/signup.css' %}">
+<title>SignUp</title>
+{% endblock title %}
+
+{% block content %}
+<h1>ovo je SignUp</h1>
+
+<form method="POST" action="">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit">
+</form> 
+
+<a href="{% url 'login' %}">
+    <button>Idi na Log In</button>
+</a>
+<a href="{% url 'home' %}">
+    <button>Idi kuci</button>
+</a>
+{% endblock content %}

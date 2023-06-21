@@ -7,7 +7,7 @@ import random
 from django.http.response import JsonResponse
 from django.template.loader import render_to_string
 from django.urls import reverse
-from django.contrib.auth.mixins import AccessMixin
+from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
 
 # Create your views here.
 
@@ -30,9 +30,12 @@ class PairsMixin:
         return super().dispatch(request, *args, **kwargs)
 
 
+"""   ###########################################################################   """
 
-class Start_view(TemplateView):
+class Start_view(LoginRequiredMixin, TemplateView):
     template_name='game/start.html'
+
+
 
 class List_view(ListView):
     model=Card
@@ -46,48 +49,32 @@ class Cards_view(ListView):
 
 """  ################################################################  """
     
-class Draft_view(ListView):
+class Draft_view(LoginRequiredMixin, ListView):
     model=Card
     template_name='game/draft.html'
     context_object_name='draft_list'
 
     def get(self, request):
-        if 'delete_cards' in request.POST:
-            if 'card_ids' in request.session:
-                del request.session['card_ids']
-                request.session.modified = True
-            cards = []
-
+        card_ids = request.session.get('card_ids')
+        
+        if card_ids:
+            cards = Card.objects.filter(id__in=card_ids)
         else:
-            card_ids = request.session.get('card_ids')
-            if card_ids:
-                cards = Card.objects.filter(id__in=card_ids)
-            else:
-                cards = []
+            cards = []
         
         context = {'cards': cards}
         return render(request, self.template_name, context)
     
     def post(self, request):
-        if 'delete_cards' in request.POST:
-            if 'card_ids' in request.session:
-                del request.session['card_ids']
-                request.session.modified = True
             
-            if 'shuffled' in request.session:
-                del request.session['shuffled']
-                request.session.modified = True
-            cards = []
-
+        card_ids = request.session.get('card_ids')
+        if card_ids:
+            cards = Card.objects.filter(id__in=card_ids)
         else:
-            card_ids = request.session.get('card_ids')
-            if card_ids:
-                cards = Card.objects.filter(id__in=card_ids)
-            else:
-                cards = self.get_random_cards()
-                card_ids=[card.id for card in cards]
-                request.session['card_ids'] = card_ids
-                request.session.modified = True
+            cards = self.get_random_cards()
+            card_ids=[card.id for card in cards]
+            request.session['card_ids'] = card_ids
+            request.session.modified = True
 
         context = {'cards': cards}
         return render(request, self.template_name, context)

@@ -38,7 +38,6 @@
         <form action="{% url 'draft' %}" method="POST">
             {% csrf_token %}
             <button type="submit" name="draw_cards">Draw Champions</button>
-            <button type="submit" name="delete_cards">Delete cards</button>
         </form>
         <a href="{% url 'bonus' %}">
             <button>Proceed to Bonuses</button>
@@ -70,11 +69,10 @@
         <form action="{% url 'draft' %}" method="POST">
             {% csrf_token %}
             <button type="submit" name="draw_cards">Draw Champions</button>
-            <a href="{% url 'bonus' %}">
-                <button>Proceed to Bonuses</button>
-            </a>
-            <button type="submit" name="delete_cards">Delete cards</button>
         </form>
+        <a href="{% url 'bonus' %}">
+            <button>Proceed to Bonuses</button>
+        </a>
     </div>
     {% endif %}
 </div>
