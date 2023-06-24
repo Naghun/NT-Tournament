@@ -8,42 +8,9 @@
 {% endblock title %}
 
 {% block content %}
-<h1>ovo je Home page</h1>
-
-<a href="{% url 'start' %}">
-    <button>Idi na Menu</button>
-</a>
-<a href="{% url 'list' %}">
-    <button>Idi na detalje karti</button>
-</a>
-<a href="{% url 'draft' %}">
-    <button>Idi u Draft</button>
-</a>
-<a href="{% url 'bonus' %}">
-    <button>Idi na Bonuse</button>
-</a>
-<a href="{% url 'tournament' %}">
-    <button>Idi na Turnir</button>
-</a>
-<a href="{% url 'cards' %}">
-    <button>Idi na Karte</button>
-</a>
-<a href="{% url 'pairs' %}">
-    <button>Idi na Parove</button>
-</a>
-<a href="{% url 'login' %}">
-    <button>Idi na Log In</button>
-</a>
-<a href="{% url 'signup' %}">
-    <button>Idi na Sign Up</button>
-</a>
-<a href="{% url 'password_change' %}">
-    <button>Idi na Change Password</button>
-</a>
-<a href="{% url 'password_reset' %}">
-    <button>Idi na Reset Password</button>
-</a>
-<a href="http://127.0.0.1:8000/admin/">
-    <button>Admin stranica</button>
-</a>
+<div class="to_game">
+    <button class="game_button">To The Game</button>
+</div>
+<script src="{% static 'js/jquery-3.6.4.min.js' %}"></script>
+<script src="{% static 'js/home.js' %}"></script>
 {% endblock content %}

@@ -1,7 +1,24 @@
-h1 {
-    color: red;
+.to_game {
+    width: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
 }
 
-button {
-    color: black;
+.game_button {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    width: 80%;
+    height: 70px;
+    color: rgb(41, 41, 107);
+    border: none;
+    border-radius: 20px;
+    font-size: x-large;
+    font-weight: bold;
+}
+
+.game_button:hover {
+    color: rgb(94, 94, 179);
+    background-color: black;
+    transition: 1s ease;
 }
