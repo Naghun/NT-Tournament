@@ -8,9 +8,13 @@
 {% endblock title %}
 
 {% block content %}
-<div class="to_game">
-    <button class="game_button">To The Game</button>
-</div>
-<script src="{% static 'js/jquery-3.6.4.min.js' %}"></script>
-<script src="{% static 'js/home.js' %}"></script>
+<body class="home_page_body">
+    <div class="to_game">
+        <a href="{% url 'start' %}">
+            <button class="game_button">To The Game</button>
+        </a>
+        
+    </div>
+</body>
+
 {% endblock content %}

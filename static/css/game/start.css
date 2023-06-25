@@ -1,3 +1,53 @@
-button {
-    color: black;
+.whole {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    height: max-content;
+}
+
+.photo {
+    width: 64%;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    margin: 2% 2%;
+}
+
+.menu {
+    width: 30%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    margin: 2% 2% 0% 0%;
+}
+
+.menu a {
+    width: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+    text-decoration: none;
+}
+
+.menu a button {
+    width: 80%;
+    height: 50px;
+    border-radius: 10px;
+    border: none;
+    transition: 1s all ease;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: x-large;
+    background-color: grey;
+}
+
+.menu a button:hover {
+    color: white;
+    background-color: black;
 }

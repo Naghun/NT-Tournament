@@ -3,17 +3,42 @@
 
 {% block title %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/game/start.css' %}">
-<h1>Start game</h1>
+<title>Start Game</title>
 {% endblock title %}
 
 {% block content %}
-<h1>ovdje content</h1>
-<a href="{% url 'home' %}">
-    <button>Idi kuci</button>
-</a>
-<a href="{% url 'draft' %}">
-    <button>Start Tournament</button>
-</a>
 <div class="whole">
+
+    <div class="photo">
+        
+
+    </div>
+
+    <div class="menu">
+        <a href="{% url 'draft' %}">
+            <button>New Game</button>
+        </a>
+        <a href="#">
+            <button>Load Game</button>
+        </a>
+        <a href="#">
+            <button>Options</button>
+        </a>
+        <a href="#">
+            <button>Tutorials</button>
+        </a>
+        <a href="#">
+            <button>Exit Game</button>
+        </a>
+
+        
+
+    </div>   
+
 </div>
+
+
+    
+
+
 {% endblock content %}

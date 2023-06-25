@@ -43,11 +43,15 @@
 
         {% if user.is_authenticated %}
 
-            <a href="{% url 'logout' %}">
-                <button>Log Out</button>
-            </a>
+            <h3 class="h3_user" id="h3_user">{{user.username}}</h3>
+            <div class="user_options" id="user_options">
+                
+                <a href="{% url 'logout' %}">Log Out</a>
+                <a href="{% url 'password_change' %}">Change Password</a>
+                <a href="{% url 'password_reset' %}">Reset Password</a>
 
-            <h2>{{user.username}}</h2>
+            </div>
+                
 
         {% else %}
 
@@ -64,3 +68,4 @@
 
     
 </header>
+<script src="{% static 'js/navbar.js' %}"></script>

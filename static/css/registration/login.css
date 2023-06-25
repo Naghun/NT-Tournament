@@ -1,0 +1,138 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500&display=swap');
+
+
+
+.login_body {
+    background: url('../../images/other/background.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin: 0%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Poppins', sans-serif;
+}
+
+
+form {
+    position: relative;
+    width: 400px;
+    height: 450px;
+    border:  2px solid rgba(11, 11, 11, 0.6);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    padding: 20px;
+    background-color: rgba(247, 243, 243, 0.4);
+    backdrop-filter: blur(5px);
+}
+
+h2 {
+    font-size: 2em;
+    color: black;
+    text-align: center;
+}
+
+.input_box {
+    width: 90%;
+    position: relative;
+    padding: 20px;
+}
+
+label[for='id_username']  {
+    position: absolute;
+    left:6%;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+    transition: 0.5s all ease;
+    font-size: larger;
+    cursor: text;
+}
+
+label[for='id_password']  {
+    position: absolute;
+    left:6%;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+    transition: 0.5s all ease;
+    font-size: larger;
+    cursor: text;
+}
+
+input[type='text'] {
+    width: 90%;
+    height: 30px;
+    z-index: 2;
+    outline: none;
+    border: none;
+    border-bottom: 2px solid white;
+    background-color: transparent;
+    font-size: larger;
+}
+
+input[type='password'] {
+    width: 90%;
+    height: 30px;
+    z-index: 2;
+    outline: none;
+    border: none;
+    border-bottom: 2px solid white;
+    background-color: transparent;
+    font-size: larger;
+}
+
+input:focus ~ label, input:valid ~ label {top: -0px;}
+
+.input_box ion-icon {
+    position: absolute;
+    right: 8px;
+    font-size: 1.5em;
+}
+
+.forgot {
+    width: 90%;
+    margin: 2%;
+    color: black;
+    display: flex;
+}
+
+.forgot a {
+    margin-left: 10%;
+    color: black;
+}
+
+form button {
+    width: 80%;
+    height: 40px;
+    margin-top: 7%;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+    font-size: 1.5em;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+form button:hover {
+    color: rgb(91, 72, 199);
+}
+
+
+.signup {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.signup p {
+    margin-right: 10px;
+}
+
+.signup a {
+    color: black;
+}

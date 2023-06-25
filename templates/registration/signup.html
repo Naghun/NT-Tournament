@@ -8,18 +8,34 @@
 {% endblock title %}
 
 {% block content %}
-<h1>ovo je SignUp</h1>
-
-<form method="POST" action="">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit">
-</form> 
-
-<a href="{% url 'login' %}">
-    <button>Idi na Log In</button>
-</a>
-<a href="{% url 'home' %}">
-    <button>Idi kuci</button>
-</a>
+<body class="signup_body">
+    <form method="POST" action="">
+        <h2>Sign Up</h2>
+        {% csrf_token %}
+        <div class="input_box">
+            <ion-icon name="person-outline"></ion-icon>
+            {{ form.username }}
+            {{ form.username.label_tag }}
+        </div>
+        <div class="input_box">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            {{ form.password1 }}
+            {{ form.password1.label_tag }}
+        </div>
+        <div class="input_box">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            {{ form.password2 }}
+            {{ form.password2.label_tag }}
+        </div>
+        <button value="submit">Sign Up</button>
+        <div class="login">
+            <p>Already have account?</p>
+            <a href="{% url 'login' %}">
+                Log in
+            </a>
+        </div>
+    </form> 
+</body>
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 {% endblock content %}
