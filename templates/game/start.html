@@ -7,38 +7,40 @@
 {% endblock title %}
 
 {% block content %}
-<div class="whole">
-
-    <div class="photo">
-        
-
-    </div>
-
-    <div class="menu">
-        <a href="{% url 'draft' %}">
-            <button>New Game</button>
-        </a>
-        <a href="#">
-            <button>Load Game</button>
-        </a>
-        <a href="#">
-            <button>Options</button>
-        </a>
-        <a href="#">
-            <button>Tutorials</button>
-        </a>
-        <a href="#">
-            <button>Exit Game</button>
-        </a>
-
-        
-
-    </div>   
-
-</div>
-
-
+<body>
     
+    <div class="whole">
 
+        <div class="photo">
+            <button class="animation_button" id="animation_button1">Animate</button>
+            <button class="animation_button2" id="animation_button2">Visual</button>
+            <div class="colored_image" id="colored_image"></div>
+            <img src="{% static 'images/other/background-menu-bw.jpg' %}" alt="background" class="bg-bw">
+            
+        </div>
 
+        <div class="menu">
+            <a href="{% url 'draft' %}">
+                <button>New Game</button>
+            </a>
+            <a href="#">
+                <button>Load Game</button>
+            </a>
+            <a href="#">
+                <button>Options</button>
+            </a>
+            <a href="#">
+                <button>Tutorials</button>
+            </a>
+            <a href="#">
+                <button>Exit Game</button>
+            </a>
+
+            
+
+        </div>   
+    </div>
+</body>
+
+<script src="{% static 'js/start.js' %}"></script>
 {% endblock content %}
