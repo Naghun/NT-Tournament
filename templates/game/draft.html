@@ -7,9 +7,7 @@
 {% endblock title %}
 
 {% block content %}
-<a href="{% url 'home' %}">
-    <button>idi kuci</button>
-</a>
+
 <div class="whole">
     {% if cards %}
     <div class="first">
@@ -18,7 +16,7 @@
             <div class="inside">
                 {% for card in cards %}
                     {% if forloop.counter < 9 %}
-                        <img src="{{ card.picture.url }}" alt="{{ card.name }}">
+                        <img src="{{ card.picture.url }}" alt="{{ card.name }}" class="cards">
                     {% endif %}
                 {% endfor %}
             </div>
@@ -28,17 +26,13 @@
             <div class="inside">
                 {% for card in cards %}
                     {% if forloop.counter >= 9 and forloop.counter < 17 %}
-                        <img src="{{ card.picture.url }}" alt="{{ card.name }}">
+                        <img src="{{ card.picture.url }}" alt="{{ card.name }}" class="cards">
                     {% endif %}
                 {% endfor %}
             </div>
         </div>
     </div>
     <div class="second">
-        <form action="{% url 'draft' %}" method="POST">
-            {% csrf_token %}
-            <button type="submit" name="draw_cards">Draw Champions</button>
-        </form>
         <a href="{% url 'bonus' %}">
             <button>Proceed to Bonuses</button>
         </a>
@@ -49,7 +43,7 @@
             <div class="inside">
                 {% for card in cards %}
                     {% if forloop.counter >= 17 and forloop.counter < 25 %}
-                        <img src="{{ card.picture.url }}" alt="{{ card.name }}">
+                        <img src="{{ card.picture.url }}" alt="{{ card.name }}" class="cards">
                     {% endif %}
                 {% endfor %}
             </div>
@@ -59,7 +53,7 @@
             <div class="inside">
                 {% for card in cards %}
                     {% if forloop.counter >= 25 and forloop.counter <= 32 %}
-                        <img src="{{ card.picture.url }}" alt="{{ card.name }}">
+                        <img src="{{ card.picture.url }}" alt="{{ card.name }}" class="cards">
                     {% endif %}
                 {% endfor %}
             </div>
@@ -70,12 +64,10 @@
             {% csrf_token %}
             <button type="submit" name="draw_cards">Draw Champions</button>
         </form>
-        <a href="{% url 'bonus' %}">
-            <button>Proceed to Bonuses</button>
-        </a>
     </div>
     {% endif %}
 </div>
+
 
 {% endblock content %}
 <script src="{% static 'js/jquery-3.6.4.min.js' %}"></script>

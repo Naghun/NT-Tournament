@@ -7,7 +7,7 @@ import random
 from django.http.response import JsonResponse
 from django.template.loader import render_to_string
 from django.urls import reverse
-from django.contrib.auth.mixins import AccessMixin, LoginRequiredMixin
+from django.contrib.auth.mixins import  LoginRequiredMixin
 
 # Create your views here.
 
