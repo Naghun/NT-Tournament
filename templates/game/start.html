@@ -20,11 +20,19 @@
         </div>
 
         <div class="menu">
-            <a href="{% url 'draft' %}">
-                <button>New Game</button>
+
+        {% if from_lobby %}
+
+        <form action="{% url 'start' %}" method="POST">
+            {% csrf_token %}
+            <a href="{% url 'lobby' %}">
+                <button name="continue">Continue</button>
             </a>
-            <a href="#">
-                <button>Load Game</button>
+            <a href="{% url 'save_game' %}">
+                <button name="save_game_button">Save Game</button>
+            </a>
+            <a href="{% url 'load_game' %}">
+                <button name="load_game_button">Load Game</button>
             </a>
             <a href="#">
                 <button>Options</button>
@@ -35,10 +43,33 @@
             <a href="#">
                 <button>Exit Game</button>
             </a>
+        </form>
 
-            
+        {% else %}
 
-        </div>   
+        <form action="{% url 'start' %}" method="POST">
+            {% csrf_token %}
+            <a href="{% url 'new_game' %}">
+                <button name="new_game_button">New Game</button>
+            </a>
+            <a href="{% url 'load_game' %}">
+                <button name="load_game_button">Load Game</button>
+            </a>
+            <a href="#">
+                <button>Options</button>
+            </a>
+            <a href="#">
+                <button>Tutorials</button>
+            </a>
+            <a href="#">
+                <button>Exit Game</button>
+            </a>
+        </form>
+
+        {% endif %}
+
+    </div>   
+        
     </div>
 </body>
 

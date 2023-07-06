@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/game/new_game_menu.css' %}">
+<title>New Game</title>
+{% endblock title %}
+
+{% block content %}
+<div class="okvirni_div">
+    <div>
+        {% if request.method == 'GET' %}
+        <form action="{% url 'new_game' %}" method="POST">
+            {% csrf_token %}
+            <label for="world_name">World Name:</label>
+            <input type="text" name="world_name" id="world_name" class="world_name">
+            <button value="submit" class="world_name_button" name="world_name_button">Confirm</button>
+        </form>
+        {% elif request.method == 'POST' %}
+        <p> {{message}} </p>
+        <form action="{% url 'new_game' %}" method="POST">
+            {% csrf_token %}
+            <label for="world_name">World Name:</label>
+            <input type="text" name="world_name" id="world_name" class="world_name">
+            <button value="submit" class="world_name_button" name="world_name_button">Confirm</button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}

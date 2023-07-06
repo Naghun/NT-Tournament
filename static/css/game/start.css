@@ -119,8 +119,12 @@ img {
     margin: 2% 2% 0% 0%;
 }
 
-.menu a {
+.menu form {
     width: 90%;
+}
+
+.menu form a {
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/game/loby.css' %}">
+<title>Loby</title>
+{% endblock title %}
+
+{% block content %}
+<div class="okvirni_div">
+    <div>
+        {{tournament_number}}
+        {{world_name}}
+    </div>
+    <div>
+        <a href="{% url 'draft' %}">
+            <button>Start Tournament</button>
+        </a>
+        <a href="{% url 'start' %}">
+            <button>Menu</button>
+        </a>
+        <a href="{% url 'list' %}">
+            <button>Go to Details</button>
+        </a>
+    </div>
+</div>
+{% endblock content %}

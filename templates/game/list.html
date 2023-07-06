@@ -25,6 +25,7 @@
             <th>Health</th>
             <th>Attack</th>
             <th>Deffence</th>
+            <th>Wins</th>
         </tr>
         {% for card in data_of_cards|dictsort:"attack" %}
         <tr>
@@ -37,6 +38,7 @@
             <td>{{card.health}}</td>
             <td>{{card.attack}}</td>
             <td>{{card.deffence}}</td>
+            <td>{{card.wins}}</td>
         </tr>
     {% endfor %}
     </table>

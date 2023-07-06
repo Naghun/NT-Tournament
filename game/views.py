@@ -2,12 +2,14 @@ from typing import Any, Dict
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, ListView
-from .models import Card
-import random
+from .models import Card, InitialCards, Tournament, Winners
+import random, pickle
 from django.http.response import JsonResponse
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.contrib.auth.mixins import  LoginRequiredMixin
+from .forms import SaveGame
+from django.core.files.storage import default_storage
 
 # Create your views here.
 
@@ -32,10 +34,37 @@ class PairsMixin:
 
 """   ###########################################################################   """
 
-class Start_view(LoginRequiredMixin, TemplateView):
+class Start_view(LoginRequiredMixin, ListView):
     template_name='game/start.html'
+    model=Tournament
 
+    def create_new_game(self):
+        tournament_data=Tournament.objects.get(id=1)
+        tournament_data.tournament=1
+        tournament_data.year=1
+        tournament_data.save()
 
+    def post(self, request):
+        if 'new_game_button' in request.POST:
+            self.create_new_game()
+            return redirect('new_game')
+        elif 'continue' in request.POST:
+            return redirect('lobby')
+        elif 'save_game_button' in request.POST:
+            return redirect('save_game')
+        elif 'load_game_button' in request.POST:
+            return redirect('load_game')
+
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        previous=self.request.META.get('HTTP_REFERER')
+
+        if previous and 'lobby' in previous:
+            context['from_lobby'] = True
+        else:
+            context['from_lobby'] = False
+
+        return context
 
 class List_view(ListView):
     model=Card
@@ -47,6 +76,106 @@ class Cards_view(ListView):
     template_name='game/cards.html'
     context_object_name='pictures_of_cards'
 
+
+"""   ##########################################################################   """
+
+class New_game_view(LoginRequiredMixin, TemplateView):
+    template_name='game/new_game_menu.html'
+
+    def post(self, request):
+        if 'world_name_button' in request.POST:
+            world_name=request.POST.get('world_name')
+
+            if world_name == '':
+                message='please enter valid name'
+                context={'message':message}
+                return render(request, self.template_name, context)
+            else:
+                request.session['world_name']=world_name
+                return redirect('lobby')
+            
+
+"""   ##########################################################################   """
+
+class Load_game_view(LoginRequiredMixin, TemplateView):
+    template_name='game/load_game_menu.html'
+    
+"""   ##########################################################################   """
+
+class Save_game_view(LoginRequiredMixin, ListView):
+    template_name='game/save_game_menu.html'
+    model=Card, Tournament
+
+    def get(self, request):
+        if request.method == 'POST':
+            form=SaveGame(request.POST)
+
+            if 'save_game_button' in request.POST:
+                if form.is_valid():
+                    slot=form.cleaned_data['slot']
+                    save_name=form.cleaned_data['save_name']
+                    message='Save successful'
+                    context={'message':message}
+                    file_path=f'../saves/{save_name}'
+                    self.save_file(file_path)
+                    return redirect('lobby')
+            else:
+                message='something is wrong'
+                form=SaveGame()
+                context={'form':form, 'message':message}
+
+        form=SaveGame()
+        context={'form':form}
+        return render(request, self.template_name, context)
+    
+    def post(self, request):
+        if request.method == 'POST':
+            form=SaveGame(request.POST)
+
+            if 'save_game_button' in request.POST:
+                if form.is_valid():
+                    slot=form.cleaned_data['slot']
+                    save_name=form.cleaned_data['save_name']
+                    message='Save successful'
+                    context={'message':message}
+                    file_path=f'saves/{save_name}'
+                    self.save_file(file_path)
+                    return render(request, self.template_name, context)
+                else:
+                    message='Something is wrong'
+                    form=SaveGame()
+                    context={'form':form, 'message':message}
+
+        form=SaveGame()
+        context={'form':form}
+        return render(request, self.template_name, context)
+    
+    def get_data_for_saves(self):
+        tournament_data=Tournament.objects.get(id=1)
+        cards=list(Card.objects.all())
+        data = {
+            'tournament_data': tournament_data,
+            'cards': cards
+        }
+        return data
+
+    def save_file(self, file_path):
+        data = self.get_data_for_saves()
+        with default_storage.open(file_path, 'wb') as f:
+            pickle.dump(data, f)
+
+"""   ##########################################################################   """
+
+class Lobby_view(LoginRequiredMixin, ListView):
+    model=Tournament
+    template_name='game/lobby.html'
+
+    def get(self, request):
+        tournament_number=Tournament.objects.get(id=1)
+        world_name=request.session.get('world_name')
+        context={'tournament_number':tournament_number, 'world_name':world_name}
+        return render(request, self.template_name, context)
+
 """  ################################################################  """
     
 class Draft_view(LoginRequiredMixin, ListView):
@@ -56,7 +185,6 @@ class Draft_view(LoginRequiredMixin, ListView):
 
     def get(self, request):
         card_ids = request.session.get('card_ids')
-        
         if card_ids:
             cards = Card.objects.filter(id__in=card_ids)
         else:
@@ -109,6 +237,7 @@ class Bonus_view(DraftMixin, ListView):
                 del request.session['bonus_numbers']
                 request.session.modified=True
             numbers=[]
+
         else:
             numbers=request.session.get('bonus_numbers')
         bonuses, fighters=self.define_bonuses(request)
@@ -120,7 +249,7 @@ class Bonus_view(DraftMixin, ListView):
             if 'bonus_numbers' in request.session:
                 del request.session['bonus_numbers']
                 request.session.modified=True
-            numbers=[]
+            numbers=[]   
 
         context={'numbers':numbers}
         return render(request, self.template_name, context)
@@ -365,8 +494,10 @@ class Tournament_view(DraftMixin, BonusMixin, PairsMixin, ListView):
             del request.session['shuffled']
             cards=[]
             numbers=[]
+            tournament_number=Tournament.objects.get(id=1)
+            tournament_number.increase_year()
             request.session.modified=True
-            return redirect(reverse('start'))
+            return redirect(reverse('lobby'))
 
     
     def round1(self, request):
@@ -728,8 +859,12 @@ class Tournament_view(DraftMixin, BonusMixin, PairsMixin, ListView):
         f1=pair[0]
         f2=pair[1]
         if f1[2]=='Human' and f2[2]=='Alien':
-            f1[6]-=120
-            f1[4]-=12
+            if f1[6]<=120:
+                f1[6]=1
+                f1[4]-=12
+            else:
+                f1[6]-=120
+                f1[4]-=12
         elif f1[2]=='Alien' and f2[2]=='Fantasy':
             f1[7]-=20
             f1[4]-=20
@@ -740,8 +875,12 @@ class Tournament_view(DraftMixin, BonusMixin, PairsMixin, ListView):
             f1[7]-=20
             f1[4]-=20
         elif f2[2]=='Human' and f1[2]=='Alien':
-            f2[6]-=120
-            f2[4]-=12
+            if f2[6]<=120:
+                f2[6]=1
+                f2[4]-=12
+            else:
+                f2[6]-=120
+                f2[4]-=12
         elif f2[2]=='Alien' and f1[2]=='Fantasy':
             f2[7]-=20
             f2[4]-=20
@@ -755,4 +894,3 @@ class Tournament_view(DraftMixin, BonusMixin, PairsMixin, ListView):
 
 
         return f1, f2
-

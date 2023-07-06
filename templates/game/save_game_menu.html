@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/game/save_game_menu.css' %}">
+<title>Save Game</title>
+{% endblock title %}
+
+{% block content %}
+{% if request.method == 'GET' %}
+    <div class="okvirni_div">
+        <form action="{% url 'save_game' %}" method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" name="save_game_button">Save Game</button>
+        </form>
+    </div>
+    <div>
+        <a href="{% url 'lobby' %}">
+            <button>Go to lobby</button>
+        </a>
+    </div>
+{% elif request.method == 'POST' %}
+    <div>
+        <a href="{% url 'lobby' %}">
+            <button>Go to lobby</button>
+        </a>
+        <p> {{ message }} </p>
+    </div>
+{% endif %}
+{% endblock content %}
