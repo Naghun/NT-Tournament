@@ -6,7 +6,7 @@ from .models import Card, InitialCards, Tournament, Winners
 import random, pickle
 from django.http.response import JsonResponse
 from django.template.loader import render_to_string
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.contrib.auth.mixins import  LoginRequiredMixin
 from .forms import SaveGame
 from django.core.files.storage import default_storage
@@ -36,7 +36,29 @@ class PairsMixin:
 
 class Start_view(LoginRequiredMixin, ListView):
     template_name='game/start.html'
-    model=Tournament
+    queryset=[]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        self.queryset.extend(Card.objects.all())
+        self.queryset.append(Tournament.objects.get(id=1))
+        self.queryset.append(InitialCards.objects.all())
+        return queryset
+    
+    def reset_winners(self):
+        Winners.objects.all().delete()
+    
+    def reset_cards(self):
+        initial_cards=InitialCards.objects.all()
+        for initial_card in initial_cards:
+            card = Card.objects.only('overall', 'health', 'speed', 'attack', 'deffence', 'wins').get(id=initial_card.id)
+            card.overall = initial_card.overall
+            card.health = initial_card.health
+            card.speed = initial_card.speed
+            card.attack = initial_card.attack
+            card.deffence = initial_card.deffence
+            card.wins = initial_card.wins
+            card.save()
 
     def create_new_game(self):
         tournament_data=Tournament.objects.get(id=1)
@@ -47,6 +69,9 @@ class Start_view(LoginRequiredMixin, ListView):
     def post(self, request):
         if 'new_game_button' in request.POST:
             self.create_new_game()
+            self.reset_cards()
+            self.reset_winners()
+            del request.session['world_name']
             return redirect('new_game')
         elif 'continue' in request.POST:
             return redirect('lobby')
@@ -60,6 +85,8 @@ class Start_view(LoginRequiredMixin, ListView):
         previous=self.request.META.get('HTTP_REFERER')
 
         if previous and 'lobby' in previous:
+            context['from_lobby'] = True
+        elif previous and 'load_game' in previous:
             context['from_lobby'] = True
         else:
             context['from_lobby'] = False
@@ -97,26 +124,35 @@ class New_game_view(LoginRequiredMixin, TemplateView):
 
 """   ##########################################################################   """
 
-class Load_game_view(LoginRequiredMixin, TemplateView):
-    template_name='game/load_game_menu.html'
-    
-"""   ##########################################################################   """
-
 class Save_game_view(LoginRequiredMixin, ListView):
     template_name='game/save_game_menu.html'
-    model=Card, Tournament
+    queryset=[]
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        self.queryset.extend(Card.objects.all())
+        self.queryset.append(Tournament.objects.get(id=1))
+        self.queryset.append(Winners.objects.get())
+        return queryset
+    
     def get(self, request):
+        saved_names=request.session.get('saved_names')
+        if saved_names:
+            names=saved_names
+        else:
+            names=[]
         if request.method == 'POST':
             form=SaveGame(request.POST)
 
             if 'save_game_button' in request.POST:
                 if form.is_valid():
-                    slot=form.cleaned_data['slot']
                     save_name=form.cleaned_data['save_name']
+                    names.append(save_name)
+                    unique_names=list(set(names))
+                    request.session['saved_names']=unique_names
                     message='Save successful'
                     context={'message':message}
-                    file_path=f'../saves/{save_name}'
+                    file_path=f'../saves/{save_name}.txt'
                     self.save_file(file_path)
                     return redirect('lobby')
             else:
@@ -129,16 +165,23 @@ class Save_game_view(LoginRequiredMixin, ListView):
         return render(request, self.template_name, context)
     
     def post(self, request):
+        saved_names=request.session.get('saved_names')
+        if saved_names:
+            names=saved_names
+        else:
+            names=[]
         if request.method == 'POST':
             form=SaveGame(request.POST)
 
             if 'save_game_button' in request.POST:
                 if form.is_valid():
-                    slot=form.cleaned_data['slot']
                     save_name=form.cleaned_data['save_name']
+                    names.append(save_name)
+                    unique_names=list(set(names))
+                    request.session['saved_names']=unique_names
                     message='Save successful'
                     context={'message':message}
-                    file_path=f'saves/{save_name}'
+                    file_path=f'saves/{save_name}.txt'
                     self.save_file(file_path)
                     return render(request, self.template_name, context)
                 else:
@@ -152,10 +195,13 @@ class Save_game_view(LoginRequiredMixin, ListView):
     
     def get_data_for_saves(self):
         tournament_data=Tournament.objects.get(id=1)
+        tournament_data.tournament-=1
         cards=list(Card.objects.all())
+        winners=list(Winners.objects.all())
         data = {
             'tournament_data': tournament_data,
-            'cards': cards
+            'cards': cards,
+            'winners':winners
         }
         return data
 
@@ -163,6 +209,77 @@ class Save_game_view(LoginRequiredMixin, ListView):
         data = self.get_data_for_saves()
         with default_storage.open(file_path, 'wb') as f:
             pickle.dump(data, f)
+    
+    
+"""   ##########################################################################   """
+
+class Load_game_view(LoginRequiredMixin, TemplateView):
+    template_name='game/load_game_menu.html'
+
+    def get(self, request):
+        saved_games = request.session.get('saved_names')
+        context = {'saves': saved_games}
+        return render(request, self.template_name, context)
+    
+    def post(self, request):
+        saved_games = request.session.get('saved_names')
+        for i in range(1, 5):
+            button_name = f'load_button{i}'
+            if button_name in request.POST:
+                name = saved_games[i-1]
+                file_path = f'../images/saves/{name}.txt'
+                data = self.load_file(file_path)
+                self.load_data(data)
+                return redirect('lobby')
+
+        context = {'saves': saved_games}
+        return render(request, self.template_name, context)
+
+    
+    def load_file(self, file_path):
+        with default_storage.open(file_path, 'rb') as f:
+            data= pickle.load(f)
+        return data
+    
+    def load_data(self, data):
+        tournament_data = data['tournament_data']
+        cards = data['cards']
+        loaded_winners = data['winners']
+
+        tournament = Tournament.objects.get(id=1)
+        tournament.tournament = tournament_data.tournament
+        tournament.year = tournament_data.year
+        tournament.save()
+
+        Winners.objects.all().delete()
+
+        for winner_data in loaded_winners:
+            tournament_num = winner_data.tournament_number
+            tournament_num+=1
+            tournament_year = winner_data.tournament_year
+            winner = winner_data.winner
+
+            winner_instance = Winners(tournament_number=tournament_num, tournament_year=tournament_year, winner=winner)
+            winner_instance.save()
+
+        Card.objects.all().delete()
+        for card_data in cards:
+            card = Card(
+                id=card_data.id,
+                name=card_data.name,
+                race=card_data.race,
+                tier=card_data.tier,
+                overall=card_data.overall,
+                speed=card_data.speed,
+                health=card_data.health,
+                attack=card_data.attack,
+                deffence=card_data.deffence,
+                crit=card_data.crit,
+                fatique=card_data.fatique,
+                picture=card_data.picture,
+                wins=card_data.wins
+            )
+            card.save()
 
 """   ##########################################################################   """
 
@@ -451,7 +568,7 @@ class PairsView(DraftMixin, BonusMixin, ListView):
     
 class Tournament_view(DraftMixin, BonusMixin, PairsMixin, ListView):
     template_name='game/tournament.html'
-    model=Card
+    model=Card, Winners, Tournament
     context_object_name='tournament_list'
 
     def get(self, request):
@@ -483,7 +600,7 @@ class Tournament_view(DraftMixin, BonusMixin, PairsMixin, ListView):
             return render(request, self.template_name, context)
         
         elif 'finals' in request.POST:
-            logs_finals, winner=self.finals(request)
+            logs_finals, winner =self.finals(request)
             card_ids=request.session.get('card_ids')
             cards=Card.objects.filter(id__in=card_ids)
             context={'finals_logs': logs_finals, 'finals':winner, 'cards':cards}
@@ -494,8 +611,8 @@ class Tournament_view(DraftMixin, BonusMixin, PairsMixin, ListView):
             del request.session['shuffled']
             cards=[]
             numbers=[]
-            tournament_number=Tournament.objects.get(id=1)
-            tournament_number.increase_year()
+            tournament_num=Tournament.objects.get(id=1)
+            tournament_num.increase_year()
             request.session.modified=True
             return redirect(reverse('lobby'))
 
@@ -523,9 +640,107 @@ class Tournament_view(DraftMixin, BonusMixin, PairsMixin, ListView):
     def finals(self, request):
         nothing, fighters = self.semi_finals(request)
         logs, winners=self.fight(fighters)
+
+        def add_win(winners):
+            winner_id=list(winners.values())[0][0]
+            try:
+                card=Card.objects.get(id=winner_id)
+                card.wins+=1
+                card.save()
+            except Card.DoesNotExist:
+                message='something is wrong'
+                print(message)
+
+        def add_winner(winners):
+            winner_name=list(winners.values())[0][1]
+            winners=Winners()
+            tournament=Tournament.objects.get(id=1)
+            winners.winner=winner_name
+            winners.tournament_number=tournament.tournament
+            winners.tournament_year=tournament.year
+            winners.save()
+
+        def add_stats(winners):
+
+            winner_id=list(winners.values())[0][0]
+            card=Card.objects.get(id=winner_id)
+            card_tier=card.tier
+            card_wins=card.wins
+
+            def check_stats1(card_wins):
+                wins=card_wins
+                countable_wins=wins%25
+                if countable_wins == 5:
+                    card.health+=10
+                if countable_wins == 10:
+                    card.speed +=1
+                if countable_wins == 15:
+                    card.health += 10
+                if countable_wins == 20:
+                    card.deffence += 1
+                if countable_wins == 24:
+                    card.attack += 1
+                card.save()
+
+            def check_stats2(card_wins):
+                wins=card_wins
+                countable_wins=wins%15
+                if countable_wins == 3:
+                    card.health+=10
+                if countable_wins == 6:
+                    card.speed +=1
+                if countable_wins == 9:
+                    card.health += 10
+                if countable_wins == 12:
+                    card.deffence += 1
+                if countable_wins == 14:
+                    card.attack += 1
+                card.save()
+
+            def check_stats3(card_wins):
+                wins=card_wins
+                countable_wins=wins%10
+                if countable_wins == 2:
+                    card.health+=10
+                if countable_wins == 4:
+                    card.speed +=1
+                if countable_wins == 6:
+                    card.health += 10
+                if countable_wins == 8:
+                    card.deffence += 1
+                if countable_wins == 9:
+                    card.attack += 1
+                card.save()
+
+            def check_stats4(card_wins):
+                wins=card_wins
+                countable_wins=wins%6
+                if countable_wins == 1:
+                    card.health+=10
+                if countable_wins == 2:
+                    card.speed +=1
+                if countable_wins == 3:
+                    card.health += 10
+                if countable_wins == 4:
+                    card.deffence += 1
+                if countable_wins == 5:
+                    card.attack += 1
+                card.save()
+
+
+            if card_tier == 1:
+               check_stats1(card_wins)
+            elif card_tier == 2:
+               check_stats2(card_wins)
+            elif card_tier == 3:
+               check_stats3(card_wins)
+            elif card_tier == 4:
+               check_stats4(card_wins)
+
+        add_win(winners)
+        add_winner(winners)
+        add_stats(winners)
         return logs, winners
-
-
 
     def fight(self, fighters):
         fighters=fighters
@@ -747,8 +962,8 @@ class Tournament_view(DraftMixin, BonusMixin, PairsMixin, ListView):
             log.append('-------------------------------------------------')
             log.append('')
             log.append('')
-
-        return log, winners
+        else:
+            return log, winners
     
     def check_crit(self, f_att, f_crit):
         crit_chance=f_crit

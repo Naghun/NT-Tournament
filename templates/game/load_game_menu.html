@@ -8,6 +8,22 @@
 
 {% block content %}
 <div class="okvirni_div">
-    
+        {% for save in saves %}
+            {% if forloop.counter < 5 %}
+            <form action="{% url 'load_game' %}" method="post">
+                {% csrf_token %}
+                <div class="loads">
+                    {{forloop.counter}}: {{ save }}
+                    <button class="load_button" name="load_button{{forloop.counter}}" value="submit">Load</button>
+                    <button class="delete_button" name="delete_button{{forloop.counter}}" value="submit">delete</button>
+                </div>
+            </form>
+            {% endif %}
+        {% endfor %}
+    <div>
+        <a href="{% url 'start' %}">
+            <button>Menu</button>
+        </a>
+    </div>
 </div>
 {% endblock content %}

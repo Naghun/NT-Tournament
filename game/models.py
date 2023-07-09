@@ -66,5 +66,9 @@ class Tournament(models.Model):
         return f"Year: {self.year}, Tournament: {self.tournament}"
     
 class Winners(models.Model):
-    tournament= models.ForeignKey(Tournament, on_delete=models.CASCADE)
+    tournament_number= models.BigIntegerField(default=0)
+    tournament_year=models.IntegerField(default=0)
     winner=models.CharField(max_length=250)
+
+    def __str__(self):
+        return self.winner
