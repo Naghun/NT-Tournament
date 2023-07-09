@@ -12,6 +12,7 @@ from .forms import SaveGame
 from django.core.files.storage import default_storage
 
 # Create your views here.
+#added more
 
 class DraftMixin:
     def dispatch(self, request, *args, **kwargs):
