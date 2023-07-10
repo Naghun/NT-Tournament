@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Card(models.Model):
@@ -72,3 +73,12 @@ class Winners(models.Model):
 
     def __str__(self):
         return self.winner
+
+class World(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    save_name=models.CharField(max_length=100, null=True)
+    world_name=models.CharField(max_length=100, null=True)
+
+    def __str__(self):
+        return self.name

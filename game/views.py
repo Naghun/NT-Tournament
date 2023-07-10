@@ -2,14 +2,20 @@ from typing import Any, Dict
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, ListView
-from .models import Card, InitialCards, Tournament, Winners
-import random, pickle
+from .models import Card, InitialCards, Tournament, Winners, World
+import random, pickle, os
 from django.http.response import JsonResponse
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.mixins import  LoginRequiredMixin
-from .forms import SaveGame
+from .forms import SaveGame, World_name
 from django.core.files.storage import default_storage
+from django.conf import settings
+
+from pathlib import Path
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Create your views here.
 #added more
@@ -72,7 +78,8 @@ class Start_view(LoginRequiredMixin, ListView):
             self.create_new_game()
             self.reset_cards()
             self.reset_winners()
-            del request.session['world_name']
+            if 'world_name' in request.session:
+                del request.session['world_name']
             return redirect('new_game')
         elif 'continue' in request.POST:
             return redirect('lobby')
@@ -110,17 +117,24 @@ class Cards_view(ListView):
 class New_game_view(LoginRequiredMixin, TemplateView):
     template_name='game/new_game_menu.html'
 
+    def get(self, request):
+        form = World_name()
+        context = {'form': form}
+        return render(request, self.template_name, context)
+    
     def post(self, request):
-        if 'world_name_button' in request.POST:
-            world_name=request.POST.get('world_name')
+        if request.method == 'POST':
+            form = World_name(request.POST)
+            if 'world_name_button' in request.POST:
+                if form.is_valid():
+                    world_name = form.cleaned_data['world_name']
+                    request.session['world_name'] = world_name
+                    return redirect('lobby')
+                else:
+                    message = 'Please enter a valid name'
+                    context = {'message': message, 'form': form}
+                    return render(request, self.template_name, context)
 
-            if world_name == '':
-                message='please enter valid name'
-                context={'message':message}
-                return render(request, self.template_name, context)
-            else:
-                request.session['world_name']=world_name
-                return redirect('lobby')
             
 
 """   ##########################################################################   """
@@ -134,39 +148,23 @@ class Save_game_view(LoginRequiredMixin, ListView):
         self.queryset.extend(Card.objects.all())
         self.queryset.append(Tournament.objects.get(id=1))
         self.queryset.append(Winners.objects.get())
+        self.queryset.append(World.objects.all())
         return queryset
     
     def get(self, request):
-        saved_names=request.session.get('saved_names')
+        saved_names = request.session.get('saved_names')
+        world_name = request.session.get('world_name')
         if saved_names:
-            names=saved_names
+            names = saved_names
         else:
-            names=[]
-        if request.method == 'POST':
-            form=SaveGame(request.POST)
-
-            if 'save_game_button' in request.POST:
-                if form.is_valid():
-                    save_name=form.cleaned_data['save_name']
-                    names.append(save_name)
-                    unique_names=list(set(names))
-                    request.session['saved_names']=unique_names
-                    message='Save successful'
-                    context={'message':message}
-                    file_path=f'../saves/{save_name}.txt'
-                    self.save_file(file_path)
-                    return redirect('lobby')
-            else:
-                message='something is wrong'
-                form=SaveGame()
-                context={'form':form, 'message':message}
-
-        form=SaveGame()
-        context={'form':form}
+            names = []
+        form = SaveGame()
+        context = {'form': form}
         return render(request, self.template_name, context)
     
     def post(self, request):
         saved_names=request.session.get('saved_names')
+        world_name = request.session.get('world_name')
         if saved_names:
             names=saved_names
         else:
@@ -176,14 +174,16 @@ class Save_game_view(LoginRequiredMixin, ListView):
 
             if 'save_game_button' in request.POST:
                 if form.is_valid():
+                    user = request.user
                     save_name=form.cleaned_data['save_name']
                     names.append(save_name)
                     unique_names=list(set(names))
                     request.session['saved_names']=unique_names
                     message='Save successful'
-                    context={'message':message}
                     file_path=f'saves/{save_name}.txt'
                     self.save_file(file_path)
+                    World.objects.create(user=user, name=world_name, save_name=save_name, world_name=world_name)
+                    context={'message':message, 'user':user, 'world':world_name, 'save':save_name}
                     return render(request, self.template_name, context)
                 else:
                     message='Something is wrong'
@@ -218,20 +218,33 @@ class Load_game_view(LoginRequiredMixin, TemplateView):
     template_name='game/load_game_menu.html'
 
     def get(self, request):
-        saved_games = request.session.get('saved_names')
-        context = {'saves': saved_games}
+        user_saved_games = World.objects.filter(user=request.user)
+        context = {'saves': user_saved_games}
         return render(request, self.template_name, context)
     
     def post(self, request):
         saved_games = request.session.get('saved_names')
+        user_saved_games = World.objects.filter(user=request.user)
         for i in range(1, 5):
-            button_name = f'load_button{i}'
-            if button_name in request.POST:
-                name = saved_games[i-1]
+            load_button_name = f'load_button{i}'
+            delete_button_name = f'delete_button{i}'
+            if load_button_name in request.POST:
+                world = user_saved_games[i-1]
+                name=world.save_name
                 file_path = f'../images/saves/{name}.txt'
                 data = self.load_file(file_path)
                 self.load_data(data)
                 return redirect('lobby')
+            elif delete_button_name in request.POST:
+                index= i-1
+                world_to_delete = user_saved_games[index]
+                save_name = world_to_delete.save_name
+                file_path = str(BASE_DIR.joinpath(f'static/images/saves/{save_name}.txt'))
+                #file_path = f'../images/saves/{save_name}.txt'
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+                world_to_delete.delete()
+                return render(request, self.template_name)
 
         context = {'saves': saved_games}
         return render(request, self.template_name, context)
@@ -248,7 +261,7 @@ class Load_game_view(LoginRequiredMixin, TemplateView):
         loaded_winners = data['winners']
 
         tournament = Tournament.objects.get(id=1)
-        tournament.tournament = tournament_data.tournament
+        tournament.tournament = (tournament_data.tournament+1)
         tournament.year = tournament_data.year
         tournament.save()
 
