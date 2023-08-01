@@ -1,5 +1,9 @@
 # NT Tournament - Realms Chosen
 
+## About
+
+Realms Chosen is a browser game developed by a solo developer. The game's logic and backend are built using Python with the Django Framework, while the frontend is designed using vanilla HTML, CSS, and JavaScript.
+
 ## Game Description
 Realms Chosen is an evolving card game featuring 80 unique cards divided into 4 races, each with 20 heroes.
 
