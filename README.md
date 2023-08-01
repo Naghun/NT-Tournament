@@ -41,4 +41,7 @@ pip install -r requirements.txt
 ## Created by
 Abdullah Sinanović
 
+**Copyright Notice:**
+This game uses images whose rights I do not own, and I do not intend to publish it anywhere. It serves the purpose of improving my skills as a programmer until I acquire the necessary rights or create my own heroes and all other assets for which I have the proper rights to use.
+
 :sparkles: **Welcome to the Realms Chosen** :sparkles:
