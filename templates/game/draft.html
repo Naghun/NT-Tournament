@@ -2,17 +2,16 @@
 {% load static %}
 
 {% block title %}
-<link rel="stylesheet" type="text/css" href="{% static 'css/game/draft.css' %}">
 <title>Draft</title>
 {% endblock title %}
 
 {% block content %}
-
+<link rel="stylesheet" type="text/css" href="{% static 'css/game/draft.css' %}">
 <div class="whole">
     {% if cards %}
     <div class="first">
         <div class="first_one">
-            <h3>Humans</h3>
+            <h3 class="h3_draft">Humans</h3>
             <div class="inside">
                 {% for card in cards %}
                     {% if forloop.counter < 9 %}
@@ -22,7 +21,7 @@
             </div>
         </div>
         <div class="first_two">
-            <h3>Fantasy</h3>
+            <h3 class="h3_draft">Fantasy</h3>
             <div class="inside">
                 {% for card in cards %}
                     {% if forloop.counter >= 9 and forloop.counter < 17 %}
@@ -39,7 +38,7 @@
     </div>
     <div class="third">
         <div class="third_one">
-            <h3>Creature</h3>
+            <h3 class="h3_draft">Creature</h3>
             <div class="inside">
                 {% for card in cards %}
                     {% if forloop.counter >= 17 and forloop.counter < 25 %}
@@ -49,7 +48,7 @@
             </div>
         </div>
         <div class="third_two">
-            <h3>Alien</h3>
+            <h3 class="h3_draft">Alien</h3>
             <div class="inside">
                 {% for card in cards %}
                     {% if forloop.counter >= 25 and forloop.counter <= 32 %}

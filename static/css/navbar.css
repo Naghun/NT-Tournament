@@ -73,7 +73,7 @@ header {
     padding: 0%;
 }
 
-.user h3 {
+.user .h3_user {
     width: 87.5%;
     color: #2a5d81;
     text-decoration: underline;
@@ -83,7 +83,7 @@ header {
     padding: 10px;
 }
 
-.user h3:hover {
+.user .h3_user:hover {
     background-color: rgba(186, 178, 178, 0.4);
     border: none;
     outline: none;
@@ -95,6 +95,7 @@ header {
     width: 45%;
     margin: 0% 0% 1% 0%;
 }
+
 .user button {
     width: 90%;
     height: 40px;
