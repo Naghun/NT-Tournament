@@ -15,7 +15,6 @@ Designs need to be added for almost the entire application, except for user auth
 - Logo for game needs to be changed.
 - Whole Home Page and Navigation bar, including colors of background image.
 - Lobby page Designs.
-- Navigation Bar html h elements need to get class of their own.
 - Draft page design when cards are not drawn.
 - Bonus page designs not done at all.
 - Basic design done only for round 1 of tournament.
