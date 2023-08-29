@@ -36,8 +36,8 @@ Before running the project, please make sure you have the necessary dependencies
 
 To install the dependencies, run the following command:
 ...Command  Shell
+venv/Scripts/activate
 pip install -r requirements.txt
-Next step is type: pipenv shell to open project in virtual enviroment.
 Last step is type: python manage.py runserver - to start application
 After that visit http://127.0.0.1:8000/ to view my app
 
