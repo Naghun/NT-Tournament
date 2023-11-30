@@ -32,11 +32,12 @@ Recently, I had the opportunity to fulfill the dreams of my younger self, and I 
 The game, Realms Chosen, is a testament to my childhood aspirations, and I am excited to embark on this journey of turning it into something beyond my wildest imagination. I want to share this enthusiasm with you, the players, as we create a truly unforgettable gaming experience together. Thank you for joining me on this adventure, and I hope you find as much joy in playing as I found in creating it. Let's make dreams a reality!
 
 ## Requirements
+Python installed!!!*
 Before running the project, please make sure you have the necessary dependencies installed. The required packages and their versions are listed in the `requirements.txt` file.
 
 To install the dependencies, run the following command:
 ...Command  Shell
-venv/Scripts/activate
+optional: virtualenv\env  ->  env\scripts\activate
 pip install -r requirements.txt
 Last step is type: python manage.py runserver - to start application
 After that visit http://127.0.0.1:8000/ to view my app
